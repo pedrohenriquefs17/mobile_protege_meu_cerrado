@@ -1,105 +1,179 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
+import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
+import 'package:provider/provider.dart';
 
-class BlogScreen extends StatelessWidget {
-  const BlogScreen({super.key});
-  
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  void _onNavTap(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> posts = [
-      {
-        "title": "Como proteger o Cerrado?",
-        "imageUrl":
-            "https://via.placeholder.com/400x200.png?text=Cerrado+Protegido",
-        "description": "Aprenda as principais ações para preservar o Cerrado.",
-      },
-      {
-        "title": "A fauna do Cerrado em perigo",
-        "imageUrl":
-            "https://via.placeholder.com/400x200.png?text=Fauna+do+Cerrado",
-        "description":
-            "Conheça os animais ameaçados de extinção e como ajudá-los.",
-      },
-      {
-        "title": "Impactos das queimadas",
-        "imageUrl":
-            "https://via.placeholder.com/400x200.png?text=Queimadas",
-        "description":
-            "Entenda os efeitos das queimadas no meio ambiente e na fauna.",
-      },
-    ];
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Blog - Protege Meu Cerrado'),
+        title: const Text('Protege Meu Cerrado'),
         centerTitle: true,
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(8.0),
-        itemCount: posts.length,
-        itemBuilder: (context, index) {
-          final post = posts[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        actions: [
+          IconButton(
+            icon: Icon(
+              themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12),
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Ocorrências Populares',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Image.network(
-                    post["imageUrl"]!,
-                    height: 180,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        post["title"]!,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 5, // Exemplo: 5 ocorrências
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Carrossel de Imagens
+                        CarouselSlider(
+                          options: CarouselOptions(
+                            height: 200.0,
+                            autoPlay: true,
+                            enlargeCenterPage: true,
+                          ),
+                          items: [
+                            'https://via.placeholder.com/400x200.png?text=Imagem+1',
+                            'https://via.placeholder.com/400x200.png?text=Imagem+2',
+                            'https://via.placeholder.com/400x200.png?text=Imagem+3',
+                          ].map((url) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(12),
+                                  ),
+                                  child: Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                  ),
+                                );
+                              },
+                            );
+                          }).toList(),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        post["description"]!,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // Navegar para a página de detalhes, se necessário
-                          },
-                          child: const Text(
-                            'Leia Mais',
-                            style: TextStyle(color: Colors.green),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Ocorrência ${index + 1}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Descrição breve da ocorrência aqui. Local: Parque Nacional do Cerrado.',
+                                style: Theme.of(context)
+                                    .textTheme.labelLarge,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.thumb_up_alt_outlined,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                        onPressed: () {
+                                          // Lógica para curtir
+                                        },
+                                      ),
+                                      const Text('123'),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.comment_outlined,
+                                          color: Colors.grey,
+                                        ),
+                                        onPressed: () {
+                                          // Lógica para comentar
+                                        },
+                                      ),
+                                      const Text('45'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          );
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Lógica para criar ocorrência
         },
+        label: const Text('Nova Ocorrência'),
+        icon: const Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onNavTap,
       ),
     );
   }
-  
 }
