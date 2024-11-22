@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
+import 'package:mobile_protege_meu_cerrado/components/info_card.dart';
+import 'package:mobile_protege_meu_cerrado/pages/blog_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/config_page..dart';
+import 'package:mobile_protege_meu_cerrado/pages/ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,9 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   // Lista de páginas para navegação
   final List<Widget> _pages = [
     const HomeContent(),
-    const Center(child: Text('Ocorrências')),
-    const Center(child: Text('Blog')),
-    const Center(child: Text('Configurações')),
+    const OcorrenciasPage(),
+    const BlogPage(),
+    const ConfiguracoesPage(),
   ];
 
   void _onNavTap(int index) {
@@ -51,14 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // Conteúdo principal da página
           _pages[_currentIndex],
-
           // flutuante
           Positioned(
             bottom: 18,
             left: 24,
             right: 24,
             child: Container(
-              height: 64, // Aumente a altura para 64
+              height: 64,
               decoration: BoxDecoration(
                 color: const Color(0xFF5B7275).withOpacity(0.8),
                 borderRadius: const BorderRadius.all(Radius.circular(24)),
@@ -81,16 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      /*floatingActionButton: _currentIndex == 0
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                // Lógica para criar nova ocorrência
-              },
-              label: const Text('Nova Ocorrência'),
-              icon: const Icon(Icons.add),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            )*/
-      //: null,
     );
   }
 }
@@ -100,125 +93,113 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Ocorrências Populares',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 300,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/cerrado.jpeg'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 5, // Exemplo: 5 ocorrências
-              itemBuilder: (context, index) {
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                Container(
+                  height: 300,
+                  color: Colors.black.withOpacity(0.4),
+                ),
+                Positioned(
+                  bottom: 30,
+                  left: 20,
+                  child: Text(
+                    'Protege Meu Cerrado',
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: Colors.white,
+                      fontSize: 28
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CarouselSlider(
-                        options: CarouselOptions(
-                          height: 200.0,
-                          autoPlay: true,
-                          enlargeCenterPage: true,
-                        ),
-                        items: [
-                          'https://via.placeholder.com/400x200.png?text=Imagem+1',
-                          'https://via.placeholder.com/400x200.png?text=Imagem+2',
-                          'https://via.placeholder.com/400x200.png?text=Imagem+3',
-                        ].map((url) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  topRight: Radius.circular(12),
-                                ),
-                                child: Image.network(
-                                  url,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                ),
-                              );
-                            },
-                          );
-                        }).toList(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Ocorrência ${index + 1}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Descrição breve da ocorrência aqui. Local: Parque Nacional do Cerrado.',
-                              style: Theme.of(context).textTheme.labelLarge,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.thumb_up_alt_outlined,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                      onPressed: () {
-                                        // Lógica para curtir
-                                      },
-                                    ),
-                                    const Text('123'),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.comment_outlined,
-                                        color: Colors.grey,
-                                      ),
-                                      onPressed: () {
-                                        // Lógica para comentar
-                                      },
-                                    ),
-                                    const Text('45'),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                ),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Explore a Biodiversidade',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                  const SizedBox(height: 10),
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: 200,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                    ),
+                    items: [
+                      'assets/images/animal1.jpg',
+                      'assets/images/animal2.jpg',
+                      'assets/images/animal3.jpg',
+                    ].map((url) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              url,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // Informações Divididas em Blocos
+            const Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InfoCard(
+                    title: 'Queimadas',
+                    description:
+                        'Descubra como as queimadas impactam o Cerrado e como você pode ajudar a prevenir.',
+                    icon: Icons.local_fire_department,
+                  ),
+                   SizedBox(height: 16),
+                  InfoCard(
+                    title: 'Biodiversidade',
+                    description:
+                        'O Cerrado é lar de espécies únicas. Aprenda mais sobre sua fauna e flora.',
+                    icon: Icons.pets,
+                  ),
+                   SizedBox(height: 16),
+                  InfoCard(
+                    title: 'Ações Comunitárias',
+                    description:
+                        'Envolva-se em iniciativas que ajudam a preservar o Cerrado e a conscientizar comunidades.',
+                    icon: Icons.group,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

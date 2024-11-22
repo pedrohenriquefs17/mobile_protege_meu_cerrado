@@ -36,6 +36,10 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/icone.png
+    - assets/images/cerrado.jpeg
+    - assets/images/animal1.jpg
+    - assets/images/animal2.jpg
+    - assets/images/animal3.jpg
 
   uses-material-design: true
 
