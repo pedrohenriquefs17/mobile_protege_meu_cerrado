@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomBottomNavBar  extends StatelessWidget{
+class CustomBottomNavBar  extends StatefulWidget{
   final int currentIndex;
   final Function(int) onTap;
 
@@ -9,12 +9,21 @@ class CustomBottomNavBar  extends StatelessWidget{
     required this.currentIndex,
     required this.onTap,
   });
+
+  @override
+  State<CustomBottomNavBar> createState() => _CustomBottomNavBarState();
+
   
+}
+
+class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
+  
+    
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: onTap,
+      currentIndex: widget.currentIndex,
+      onTap: widget.onTap,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
