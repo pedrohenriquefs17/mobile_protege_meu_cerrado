@@ -3,7 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:mobile_protege_meu_cerrado/pages/ocorrencias_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,10 +16,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Lista de páginas para navegação
   final List<Widget> _pages = [
-    const HomeContent(), 
-    const OcorrenciasPage(),
-    Center(child: Text('Blog')),
-    Center(child: Text('Configurações')),
+    const HomeContent(),
+    const Center(child: Text('Ocorrências')),
+    const Center(child: Text('Blog')),
+    const Center(child: Text('Configurações')),
   ];
 
   void _onNavTap(int index) {
@@ -48,21 +47,50 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _pages[_currentIndex], // Exibe a página correspondente ao índice atual
-      floatingActionButton: _currentIndex == 0 //essa linha é pra exibir o botão apenas na tela inicial
+      body: Stack(
+        children: [
+          // Conteúdo principal da página
+          _pages[_currentIndex],
+
+          // flutuante
+          Positioned(
+            bottom: 18,
+            left: 24,
+            right: 24,
+            child: Container(
+              height: 64, // Aumente a altura para 64
+              decoration: BoxDecoration(
+                color: const Color(0xFF5B7275).withOpacity(0.8),
+                borderRadius: const BorderRadius.all(Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF5B7275).withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: CustomBottomNavBar(
+                  currentIndex: _currentIndex,
+                  onTap: _onNavTap,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      /*floatingActionButton: _currentIndex == 0
           ? FloatingActionButton.extended(
               onPressed: () {
-
+                // Lógica para criar nova ocorrência
               },
               label: const Text('Nova Ocorrência'),
               icon: const Icon(Icons.add),
               backgroundColor: Theme.of(context).colorScheme.primary,
-            )
-          : null,
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavTap,
-      ),
+            )*/
+      //: null,
     );
   }
 }
@@ -154,8 +182,9 @@ class HomeContent extends StatelessWidget {
                                     IconButton(
                                       icon: Icon(
                                         Icons.thumb_up_alt_outlined,
-                                        color:
-                                            Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                       onPressed: () {
                                         // Lógica para curtir
