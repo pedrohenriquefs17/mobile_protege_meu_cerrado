@@ -4,6 +4,7 @@ import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart'
 import 'package:mobile_protege_meu_cerrado/components/info_card.dart';
 import 'package:mobile_protege_meu_cerrado/pages/blog_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/config_page..dart';
+import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -118,10 +119,10 @@ class HomeContent extends StatelessWidget {
                   left: 20,
                   child: Text(
                     'Protege Meu Cerrado',
-                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: Colors.white,
-                      fontSize: 28
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayLarge
+                        ?.copyWith(color: Colors.white, fontSize: 28),
                   ),
                 ),
               ],
@@ -171,7 +172,7 @@ class HomeContent extends StatelessWidget {
 
             // Informações Divididas em Blocos
             const Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -181,14 +182,14 @@ class HomeContent extends StatelessWidget {
                         'Descubra como as queimadas impactam o Cerrado e como você pode ajudar a prevenir.',
                     icon: Icons.local_fire_department,
                   ),
-                   SizedBox(height: 16),
+                  SizedBox(height: 16),
                   InfoCard(
                     title: 'Biodiversidade',
                     description:
                         'O Cerrado é lar de espécies únicas. Aprenda mais sobre sua fauna e flora.',
                     icon: Icons.pets,
                   ),
-                   SizedBox(height: 16),
+                  SizedBox(height: 16),
                   InfoCard(
                     title: 'Ações Comunitárias',
                     description:
