@@ -84,7 +84,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
           ),
           SizedBox(height: 16),
           _imagens.isEmpty
-              ? Text('Nenhuma imagem selecionada.')
+              ? Text('Nenhuma imagem selecionada. mamando')
               : Wrap(
                   spacing: 8,
                   runSpacing: 8,
