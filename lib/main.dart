@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_protege_meu_cerrado/pages/home_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
@@ -15,10 +16,13 @@ class MainApp extends StatelessWidget {
   final ThemeProvider themeProvider;
   const MainApp({super.key, required this.themeProvider});
 
- @override
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: themeProvider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
+        ChangeNotifierProvider(create: (_) => PosicaoController()),
+      ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(

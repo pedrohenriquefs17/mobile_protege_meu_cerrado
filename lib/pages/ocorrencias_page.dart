@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
 import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -13,14 +12,6 @@ class OcorrenciasPage extends StatefulWidget {
 }
 
 class _OcorrenciasPageState extends State<OcorrenciasPage> {
-  int _currentIndex = 0;
-
-  void _onNavTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);

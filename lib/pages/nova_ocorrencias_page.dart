@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
+import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'dart:io';
 
 class NovaOcorrenciaPage extends StatefulWidget {
@@ -14,16 +15,19 @@ class NovaOcorrenciaPage extends StatefulWidget {
 }
 
 class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
-  final TextEditingController _tituloController = TextEditingController();
+  final TextEditingController _tituloController =
+      TextEditingController(); //Text Editing Controllers
   final TextEditingController _descricaoController = TextEditingController();
   final TextEditingController _dataController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _dataNascimentoController = TextEditingController();
+  final TextEditingController _dataNascimentoController =
+      TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final List<XFile> _imagens = [];
 
   Future<void> _pegarImagem() async {
+    //função para pegar as imagens da galeria
     final ImagePicker picker = ImagePicker();
     final List<XFile> imagens = await picker.pickMultiImage();
     setState(() {
@@ -31,14 +35,11 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     });
   }
 
-  var maskFormatterData = MaskTextInputFormatter(
-      mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
-  var maskFormatterCpf = MaskTextInputFormatter(
-      mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final posicaoController = Provider.of<PosicaoController>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Cadastrar Ocorrências',
@@ -48,103 +49,57 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          TextField( //Nome Completo
+          CustomTextfield(
             controller: _nomeController,
-            decoration: InputDecoration(
-              labelText: 'Nome Completo',
-              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
-              enabledBorder:
-                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
-              focusedBorder:
-                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
-            ),
-            style: themeProvider.themeData.textTheme.bodyLarge,
+            label: 'Nome Completo',
           ),
           SizedBox(height: 16),
-          TextField(  //E-mail
+          CustomTextfield(
             controller: _emailController,
-            decoration: InputDecoration(
-              labelText: 'E-mail',
-              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
-              enabledBorder:
-                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
-              focusedBorder:
-                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
-            ),
-            style: themeProvider.themeData.textTheme.bodyLarge,
+            label: 'E-mail',
           ),
           SizedBox(height: 16),
-          TextField(  //CPF
+          CustomTextfield(
             controller: _cpfController,
-            decoration: InputDecoration(
-              labelText: 'CPF',
-              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
-              enabledBorder:
-                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
-              focusedBorder:
-                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
-            ),
-            style: themeProvider.themeData.textTheme.bodyLarge,
-            inputFormatters: [maskFormatterCpf],
+            label: 'CPF',
           ),
           SizedBox(height: 16),
-          TextField(  //Data de Nascimento
+          CustomTextfield(
             controller: _dataNascimentoController,
-            decoration: InputDecoration(
-              labelText: 'Data de Nascimento',
-              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
-              enabledBorder:
-                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
-              focusedBorder:
-                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
-            ),
-            style: themeProvider.themeData.textTheme.bodyLarge,
-            inputFormatters: [maskFormatterData],
+            label: 'Data de Nascimento',
           ),
           SizedBox(height: 16),
-          TextField( //Titulo
+          CustomTextfield(
             controller: _tituloController,
-            decoration: InputDecoration(
-              labelText: 'Título da Ocorrência',
-              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
-              enabledBorder:
-                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
-              focusedBorder:
-                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
-            ),
-            style: themeProvider.themeData.textTheme.bodyLarge,
+            label: 'Título da Ocorrência',
           ),
           SizedBox(height: 16),
-          TextField( //Data da Ocorrência
+          CustomTextfield(
             controller: _dataController,
-            decoration: InputDecoration(
-              labelText: 'Data da Ocorrência',
-              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
-              enabledBorder:
-                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
-              focusedBorder:
-                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
-            ),
-            style: themeProvider.themeData.textTheme.bodyLarge,
-            inputFormatters: [maskFormatterData],
+            label: 'Data da Ocorrência',
           ),
           SizedBox(height: 16),
-          TextField(  //Descrição
+          CustomTextfield(
             controller: _descricaoController,
-            decoration: InputDecoration(
-              labelText: 'Descrição da Ocorrência',
-              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
-              enabledBorder:
-                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
-              focusedBorder:
-                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
-            ),
-            style: themeProvider.themeData.textTheme.bodyLarge,
-            maxLines: 5,
+            label: 'Descrição',
           ),
+          SizedBox(height: 16),
+          Text(
+            'Latitude: ${posicaoController.latitude}',
+            style: themeProvider.themeData.textTheme.bodyLarge,
+          ),
+          Text(
+            'Longitude: ${posicaoController.longitude}',
+            style: themeProvider.themeData.textTheme.bodyLarge,
+          ),
+          if (posicaoController.erro.isNotEmpty)
+            Text(
+              'Erro: ${posicaoController.erro}',
+              style: TextStyle(color: Colors.red),
+            ),
           SizedBox(height: 16),
           _imagens.isEmpty
-              ? Text('Nenhuma imagem selecionada. mamando')
+              ? Text('Nenhuma imagem selecionada.')
               : Wrap(
                   spacing: 8,
                   runSpacing: 8,
