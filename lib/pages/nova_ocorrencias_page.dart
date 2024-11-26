@@ -17,6 +17,10 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
   final TextEditingController _dataController = TextEditingController();
+  final TextEditingController _cpfController = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _dataNascimentoController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final List<XFile> _imagens = [];
 
   Future<void> _pegarImagem() async {
@@ -27,8 +31,10 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     });
   }
 
-  var maskFormatter = MaskTextInputFormatter(
+  var maskFormatterData = MaskTextInputFormatter(
       mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
+  var maskFormatterCpf = MaskTextInputFormatter(
+      mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +48,61 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          TextField(
+          TextField( //Nome Completo
+            controller: _nomeController,
+            decoration: InputDecoration(
+              labelText: 'Nome Completo',
+              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
+              enabledBorder:
+                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
+              focusedBorder:
+                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
+            ),
+            style: themeProvider.themeData.textTheme.bodyLarge,
+          ),
+          SizedBox(height: 16),
+          TextField(  //E-mail
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: 'E-mail',
+              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
+              enabledBorder:
+                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
+              focusedBorder:
+                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
+            ),
+            style: themeProvider.themeData.textTheme.bodyLarge,
+          ),
+          SizedBox(height: 16),
+          TextField(  //CPF
+            controller: _cpfController,
+            decoration: InputDecoration(
+              labelText: 'CPF',
+              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
+              enabledBorder:
+                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
+              focusedBorder:
+                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
+            ),
+            style: themeProvider.themeData.textTheme.bodyLarge,
+            inputFormatters: [maskFormatterCpf],
+          ),
+          SizedBox(height: 16),
+          TextField(  //Data de Nascimento
+            controller: _dataNascimentoController,
+            decoration: InputDecoration(
+              labelText: 'Data de Nascimento',
+              hintStyle: themeProvider.themeData.inputDecorationTheme.hintStyle,
+              enabledBorder:
+                  themeProvider.themeData.inputDecorationTheme.enabledBorder,
+              focusedBorder:
+                  themeProvider.themeData.inputDecorationTheme.focusedBorder,
+            ),
+            style: themeProvider.themeData.textTheme.bodyLarge,
+            inputFormatters: [maskFormatterData],
+          ),
+          SizedBox(height: 16),
+          TextField( //Titulo
             controller: _tituloController,
             decoration: InputDecoration(
               labelText: 'Título da Ocorrência',
@@ -55,7 +115,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
             style: themeProvider.themeData.textTheme.bodyLarge,
           ),
           SizedBox(height: 16),
-          TextField(
+          TextField( //Data da Ocorrência
             controller: _dataController,
             decoration: InputDecoration(
               labelText: 'Data da Ocorrência',
@@ -66,10 +126,10 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
                   themeProvider.themeData.inputDecorationTheme.focusedBorder,
             ),
             style: themeProvider.themeData.textTheme.bodyLarge,
-            inputFormatters: [maskFormatter],
+            inputFormatters: [maskFormatterData],
           ),
           SizedBox(height: 16),
-          TextField(
+          TextField(  //Descrição
             controller: _descricaoController,
             decoration: InputDecoration(
               labelText: 'Descrição da Ocorrência',
@@ -109,10 +169,18 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
               final descricao = _descricaoController.text;
               final imagens = _imagens;
               final data = _dataController.text;
+              final nome = _nomeController.text;
+              final cpf = _cpfController.text;
+              final dataNascimento = _dataNascimentoController.text;
+              final email = _emailController.text;
 
               debugPrint('Título: $titulo');
               debugPrint('Descrição: $descricao');
               debugPrint('Data: $data');
+              debugPrint('Nome: $nome');
+              debugPrint('CPF: $cpf');
+              debugPrint('Data de Nascimento: $dataNascimento');
+              debugPrint('E-mail: $email');
               for (var imagem in imagens) {
                 debugPrint('Imagem: ${imagem.path}');
               }
