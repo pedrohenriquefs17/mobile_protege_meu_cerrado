@@ -4,7 +4,6 @@ import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart'
 import 'package:mobile_protege_meu_cerrado/components/info_card.dart';
 import 'package:mobile_protege_meu_cerrado/pages/blog_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/config_page..dart';
-import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
