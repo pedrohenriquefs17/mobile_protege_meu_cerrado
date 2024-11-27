@@ -48,7 +48,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       ),
     );
 
-    if (widget.label == 'Descrição') {
+    if (widget.label == 'Descrição:') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
@@ -57,7 +57,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         ),
         maxLines: 5,
       );
-    } else if (widget.label == 'Data de Nascimento') {
+    } else if (widget.label == 'Data de Nascimento:') {
       return TextField(
         enabled: widget.enabled,
         controller: widget.controller,
@@ -67,7 +67,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         ),
         inputFormatters: [maskFormatterData],
       );
-    } else if (widget.label == 'CPF') {
+    } else if (widget.label == 'CPF:') {
       return TextField(
         enabled: widget.enabled,
         controller: widget.controller,
@@ -77,7 +77,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         ),
         inputFormatters: [maskFormatterCpf],
       );
-    } else if (widget.label == 'Nome Completo' || widget.label == 'E-mail') {
+    } else if (widget.label == 'Nome Completo:' || widget.label == 'E-mail:') {
       return TextField(
         enabled: widget.enabled,
         controller: widget.controller,
