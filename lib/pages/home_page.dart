@@ -128,7 +128,6 @@ class HomeContent extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -167,9 +166,7 @@ class HomeContent extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 30),
-
             // Informações Divididas em Blocos
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -199,6 +196,9 @@ class HomeContent extends StatelessWidget {
                 ],
               ),
             ),
+            // Espaço extra para evitar que a BottomNavigationBar sobreponha o conteúdo
+            const SizedBox(
+                height: 80), // Ajuste essa altura conforme necessário
           ],
         ),
       ),
