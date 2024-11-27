@@ -10,13 +10,11 @@ class NovaOcorrenciaPage extends StatefulWidget {
   const NovaOcorrenciaPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _NovaOcorrenciaPageState createState() => _NovaOcorrenciaPageState();
 }
 
 class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
-  final TextEditingController _tituloController =
-      TextEditingController(); //Text Editing Controllers
+  final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
   final TextEditingController _dataController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
@@ -27,7 +25,6 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final List<XFile> _imagens = [];
 
   Future<void> _pegarImagem() async {
-    //função para pegar as imagens da galeria
     final ImagePicker picker = ImagePicker();
     final List<XFile> imagens = await picker.pickMultiImage();
     setState(() {
@@ -42,9 +39,23 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cadastrar Ocorrências',
-            style: themeProvider.themeData.textTheme.displayLarge),
+        title: Text(
+          'Cadastrar Ocorrências',
+          style: themeProvider.themeData.textTheme.titleLarge?.copyWith(
+            color: themeProvider.themeData.colorScheme.onSurface,
+          ),
+        ),
         backgroundColor: themeProvider.themeData.colorScheme.surface,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: themeProvider.themeData.colorScheme
+                .onSurface, // aqui q fica a cor do ícone de volta
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -86,11 +97,15 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
           SizedBox(height: 16),
           Text(
             'Latitude: ${posicaoController.latitude}',
-            style: themeProvider.themeData.textTheme.bodyLarge,
+            style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+              color: themeProvider.themeData.colorScheme.onSurface,
+            ),
           ),
           Text(
             'Longitude: ${posicaoController.longitude}',
-            style: themeProvider.themeData.textTheme.bodyLarge,
+            style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+              color: themeProvider.themeData.colorScheme.onSurface,
+            ),
           ),
           if (posicaoController.erro.isNotEmpty)
             Text(
@@ -115,6 +130,14 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
           SizedBox(height: 16),
           ElevatedButton(
             onPressed: _pegarImagem,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                themeProvider.themeData.colorScheme.primary,
+              ),
+              foregroundColor: MaterialStateProperty.all(
+                themeProvider.themeData.colorScheme.onPrimary,
+              ),
+            ),
             child: Text('Selecionar Imagens'),
           ),
           SizedBox(height: 16),
@@ -140,6 +163,14 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
                 debugPrint('Imagem: ${imagem.path}');
               }
             },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                themeProvider.themeData.colorScheme.secondary,
+              ),
+              foregroundColor: MaterialStateProperty.all(
+                themeProvider.themeData.colorScheme.onSecondary,
+              ),
+            ),
             child: Text('Salvar Ocorrência'),
           ),
         ],
