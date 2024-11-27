@@ -42,7 +42,7 @@ class PosicaoController extends ChangeNotifier {
         throw 'Permissão de localização negada';
       }
     }
-
+    //oisamara
     return await Geolocator.getCurrentPosition();
   }
 }
