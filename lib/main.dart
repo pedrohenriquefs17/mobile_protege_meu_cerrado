@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:mobile_protege_meu_cerrado/pages/on_boarding_page.dart';
+=======
+import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
+>>>>>>> d028c6bb2f94be0d712ad6302a0b359809a21018
 import 'package:provider/provider.dart';
 import 'package:mobile_protege_meu_cerrado/pages/home_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
@@ -17,6 +21,7 @@ class MainApp extends StatelessWidget {
   final ThemeProvider themeProvider;
   const MainApp({super.key, required this.themeProvider});
 
+<<<<<<< HEAD
   Future<Widget> _getInitialPage() async {
     final prefs = await SharedPreferences.getInstance();
     final hasCompletedOnboarding = prefs.getBool('onboarding_completed') ?? false;
@@ -24,9 +29,15 @@ class MainApp extends StatelessWidget {
   }
 
  @override
+=======
+  @override
+>>>>>>> d028c6bb2f94be0d712ad6302a0b359809a21018
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: themeProvider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
+        ChangeNotifierProvider(create: (_) => PosicaoController()),
+      ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return FutureBuilder<Widget>(
