@@ -23,6 +23,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final List<XFile> _imagens = [];
+  bool isSwitched = false;
 
   Future<void> _pegarImagem() async {
     final ImagePicker picker = ImagePicker();
@@ -39,6 +40,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'Cadastrar Ocorrências',
           style: themeProvider.themeData.textTheme.titleLarge?.copyWith(
@@ -60,39 +62,66 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                'Denúncia Anônima',
+                style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+                  color: themeProvider.themeData.colorScheme.onSurface,
+                ),
+              ),
+              Switch(
+                value: isSwitched,
+                onChanged: (bool value) {
+                  setState(() {
+                    isSwitched = value;
+                  });
+                },
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
           CustomTextfield(
             controller: _nomeController,
             label: 'Nome Completo',
+            enabled: !isSwitched,
           ),
           SizedBox(height: 16),
           CustomTextfield(
             controller: _emailController,
             label: 'E-mail',
+            enabled: !isSwitched,
           ),
           SizedBox(height: 16),
           CustomTextfield(
             controller: _cpfController,
             label: 'CPF',
+            enabled: !isSwitched,
           ),
           SizedBox(height: 16),
           CustomTextfield(
             controller: _dataNascimentoController,
             label: 'Data de Nascimento',
+            enabled: !isSwitched,
           ),
           SizedBox(height: 16),
           CustomTextfield(
             controller: _tituloController,
             label: 'Título da Ocorrência',
+            enabled: !isSwitched,
           ),
           SizedBox(height: 16),
           CustomTextfield(
             controller: _dataController,
             label: 'Data da Ocorrência',
+            enabled: !isSwitched,
           ),
           SizedBox(height: 16),
           CustomTextfield(
             controller: _descricaoController,
             label: 'Descrição',
+            enabled: !isSwitched,
           ),
           SizedBox(height: 16),
           Text(
@@ -131,10 +160,10 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
           ElevatedButton(
             onPressed: _pegarImagem,
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(
                 themeProvider.themeData.colorScheme.primary,
               ),
-              foregroundColor: MaterialStateProperty.all(
+              foregroundColor: WidgetStateProperty.all(
                 themeProvider.themeData.colorScheme.onPrimary,
               ),
             ),
