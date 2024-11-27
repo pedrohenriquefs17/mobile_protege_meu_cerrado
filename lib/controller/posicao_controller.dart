@@ -5,7 +5,6 @@ class PosicaoController extends ChangeNotifier {
   double latitude = 0;
   double longitude = 0;
   String erro = '';
-  final samara = 0;
 
   PosicaoController() {
     getPosicao();
