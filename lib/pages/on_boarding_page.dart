@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/app_large_text.dart';
 import 'package:mobile_protege_meu_cerrado/components/app_text.dart';
+import 'package:mobile_protege_meu_cerrado/components/pulsing_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/responsive_button_cadastro.dart';
 import 'package:mobile_protege_meu_cerrado/components/responsive_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
@@ -73,6 +74,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ),
 
+              // Indicadores de página
               Positioned(
                 bottom: 40, // Indicadores abaixo do conteúdo principal
                 left: 0,
@@ -97,8 +99,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
 
               // Conteúdo no topo
-              Container(
-                margin: const EdgeInsets.only(top: 150, left: 20, right: 20),
+              Positioned(
+                top: 150, // Ajustando a posição do conteúdo
+                left: 20,
+                right: 20,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -106,7 +110,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       text: text[index],
                       color: themeProvider
                               .themeData.textTheme.displayLarge?.color ??
-                          Colors.black, // Cor padrão se for null
+                          Colors.black,
                     ),
                     AppText(
                       text: text2[index],
@@ -116,52 +120,84 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           Colors.black,
                     ),
                     SizedBox(height: 20),
-                    SizedBox(
-                      width: 250,
-                      child: AppText(
-                        text: text3[index],
-                        color: themeProvider
-                                .themeData.textTheme.bodyLarge?.color ??
-                            Colors.black,
-                        size: 18,
-                      ),
+                    AppText(
+                      text: text3[index],
+                      color:
+                          themeProvider.themeData.textTheme.bodyLarge?.color ??
+                              Colors.black,
+                      size: 18,
                     ),
-                    Container(),
-                    const SizedBox(height: 40),
-                    index == images.length - 1
-                        // Se for a última tela, exibe os botões de login e cadastro
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ResponsiveButtonLogin(
-                                width: 140, // Ajuste proporcional da largura
-                              ),
-                              ResponsiveButtonCadastro(
-                                width:
-                                    140, // Mesmo tamanho do outro botão para consistência
-                              ),
-                            ],
-                          )
-                        : Align(
-                            alignment: Alignment.center,
-                            child: GestureDetector(
-                              onTap: () {
-                                // Passa para a próxima tela usando o PageController
-                                _pageController.nextPage(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              },
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color:
-                                    themeProvider.themeData.colorScheme.primary,
-                                size: 40,
-                              ),
-                            ),
-                          ),
+                    SizedBox(height: 40),
+                    if (index == 0)
+                      AppText(
+                        text:
+                            "O nosso app visa proteger o meio ambiente do Cerrado com o uso de tecnologia.",
+                        color: themeProvider
+                                .themeData.textTheme.bodyMedium?.color ??
+                            Colors.black,
+                        size: 16,
+                      ),
+                    if (index == 1)
+                      AppText(
+                        text:
+                            "Através de inovações, buscamos transformar como as pessoas interagem com a natureza.",
+                        color: themeProvider
+                                .themeData.textTheme.bodyMedium?.color ??
+                            Colors.black,
+                        size: 16,
+                      ),
+                    if (index == 2)
+                      AppText(
+                        text:
+                            "Junte-se a nós para um futuro mais sustentável e conectado com o meio ambiente.",
+                        color: themeProvider
+                                .themeData.textTheme.bodyMedium?.color ??
+                            Colors.black,
+                        size: 16,
+                      ),
                   ],
                 ),
+              ),
+
+              // Botão de navegação (setinha)
+              if (index != images.length - 1)
+                Positioned(
+                  bottom: 450,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: PulsingButton(
+                      onPressed: () {
+                        _pageController.nextPage(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: themeProvider.themeData.colorScheme.primary,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ),
+
+              // Botões no final (se for a última tela)
+              Positioned(
+                bottom: 400,
+                left: 0,
+                right: 0,
+                child: index == images.length - 1
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ResponsiveButtonLogin(width: 140),
+                          ResponsiveButtonCadastro(width: 140),
+                        ],
+                      )
+                    : SizedBox
+                        .shrink(), // Não exibe os botões de login e cadastro
               ),
             ],
           );
