@@ -25,6 +25,9 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final List<XFile> _imagens = [];
   bool isSwitched = false;
 
+  String? opSelecionada;
+  final dropButtonOpcoes = ['Queimadas', 'Desmatamento', 'Caça Ilegal'];
+
   Future<void> _pegarImagem() async {
     final ImagePicker picker = ImagePicker();
     final List<XFile> imagens = await picker.pickMultiImage();
@@ -106,10 +109,20 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
             enabled: !isSwitched,
           ),
           SizedBox(height: 16),
-          CustomTextfield(
-            controller: _tituloController,
-            label: 'Título da Ocorrência:',
-            enabled: !isSwitched,
+          DropdownButton<String>(
+            value: opSelecionada,
+            hint: Text('Selecione o Tipo de Ocorrência'),
+            items: dropButtonOpcoes.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                opSelecionada = newValue;
+              });
+            },
           ),
           SizedBox(height: 16),
           CustomTextfield(

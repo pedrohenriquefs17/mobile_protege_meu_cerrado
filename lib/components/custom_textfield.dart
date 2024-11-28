@@ -26,6 +26,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
     var maskFormatterCpf = MaskTextInputFormatter(
         mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
+    var maskFormatterTelefone = MaskTextInputFormatter(
+        mask: '(##)#####-####', filter: {'#': RegExp(r'[0-9]')});
 
     InputDecoration inputDecoration = InputDecoration(
       labelText: widget.label,
@@ -92,6 +94,16 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         controller: widget.controller,
         decoration: inputDecoration,
         obscureText: true,
+        style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+          color: themeProvider.themeData.colorScheme.onSurface,
+        ),
+      );
+    } else if (widget.label == 'Telefone:') {
+      return TextField(
+        enabled: widget.enabled,
+        controller: widget.controller,
+        decoration: inputDecoration,
+        inputFormatters: [maskFormatterTelefone],
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
