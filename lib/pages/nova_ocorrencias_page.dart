@@ -193,10 +193,10 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
               }
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(
                 themeProvider.themeData.colorScheme.secondary,
               ),
-              foregroundColor: MaterialStateProperty.all(
+              foregroundColor: WidgetStateProperty.all(
                 themeProvider.themeData.colorScheme.onSecondary,
               ),
             ),

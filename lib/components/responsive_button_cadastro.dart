@@ -15,20 +15,38 @@ class ResponsiveButtonCadastro extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        // Navegar para a tela 'home'
         Navigator.pushReplacementNamed(context, '/cadastro');
       },
       child: Container(
-        width: width,
+        width: width ?? double.infinity,
         height: 60,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: themeProvider.themeData.colorScheme.primary, // Cor principal
+          borderRadius: BorderRadius.circular(12),
+          color: themeProvider.themeData.colorScheme.primary,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              offset: const Offset(0, 4),
+              blurRadius: 10,
+            ),
+          ], // Cor principal
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Cadastro"),
+            Icon(
+              Icons.person_add,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              "Registrar",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600),
+            ),
           ],
         ),
       ),

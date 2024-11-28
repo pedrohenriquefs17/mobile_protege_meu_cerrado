@@ -42,9 +42,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   ];
 
   List text3 = [
-    "fdksnafnsanfjksnajjksaknsaiofnsakjnfknksnf",
-    "aaaaafdksnafnsanfjksnajjksaknsaiofnsakjnfknksnf",
-    "safafsffffffdksnafnsanfjksnajjksaknsaiofnsakjnfknksnf",
+    "Preserve e inove com tecnologia.",
+    "Conecte-se ao meio ambiente.",
+    "Transforme sua relação com o Cerrado."
   ];
 
   @override
@@ -58,6 +58,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
         itemBuilder: (_, index) {
           return Stack(
             children: [
+              Positioned(
+                top: 40,
+                right: 20,
+                child: IconButton(
+                  icon: Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.dark_mode
+                        : Icons.light_mode,
+                  ),
+                  onPressed: () {
+                    themeProvider.toggleTheme();
+                  },
+                ),
+              ),
               // Imagem no fundo, posicionada no final da tela
               Positioned(
                 bottom: 0,
@@ -66,6 +80,29 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 child: Image.asset(
                   "assets/images/" + images[index],
                   fit: BoxFit.cover, // Ajusta a largura à tela
+                ),
+              ),
+
+              Positioned(
+                bottom: 40, // Indicadores abaixo do conteúdo principal
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    images.length,
+                    (indicatorIndex) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: indicatorIndex == index ? 16 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: indicatorIndex == index
+                            ? themeProvider.themeData.colorScheme.primary
+                            : Colors.grey,
+                      ),
+                    ),
+                  ),
                 ),
               ),
 
@@ -100,38 +137,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     Container(),
-                    SizedBox(height: 40),
-                    ResponsiveButtonLogin(
-                      width: 120,
-                    ),
-                    SizedBox(height: 18),
-                    ResponsiveButtonCadastro(
-                      width: 120,
+                    const SizedBox(height: 80),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ResponsiveButtonLogin(
+                          width: 140, // Ajuste proporcional da largura
+                        ),
+                        ResponsiveButtonCadastro(
+                          width:
+                              140, // Mesmo tamanho do outro botão para consistência
+                        ),
+                      ],
                     ),
                   ],
-                ),
-              ),
-              Positioned(
-                right: 20, // Distância da borda direita
-                top: MediaQuery.of(context).size.height *
-                    0.4, // Centraliza verticalmente
-                child: Column(
-                  children: List.generate(3, (indicatorIndex) {
-                    return Container(
-                      margin: const EdgeInsets.only(
-                          bottom: 8), // Espaço entre os indicadores
-                      width: 8,
-                      height: indicatorIndex == index
-                          ? 25
-                          : 8, // Destaque para o ativo
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: indicatorIndex == index
-                            ? themeProvider.themeData.colorScheme.primary
-                            : Colors.grey, // Cinza para os inativos
-                      ),
-                    );
-                  }),
                 ),
               ),
             ],

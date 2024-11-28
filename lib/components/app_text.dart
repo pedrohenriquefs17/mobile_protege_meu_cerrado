@@ -6,13 +6,20 @@ class AppText extends StatelessWidget {
   double size;
   final String text;
   final Color color;
-  AppText({super.key, required this.text, required this.color, this.size = 16});
+  final TextAlign textAlign;
+  AppText(
+      {super.key,
+      required this.text,
+      required this.color,
+      this.size = 16,
+      this.textAlign = TextAlign.start});
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Text(
       text,
+      textAlign: textAlign,
       style: themeProvider.themeData.textTheme.displayLarge?.copyWith(
         color: color,
         fontSize: size,

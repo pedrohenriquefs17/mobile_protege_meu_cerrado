@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_recuperar_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_textfield.dart';
+import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,6 +14,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String testCPF = "15787925688";
+  String testSenha = "123456";
   final TextEditingController cpfController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool rememberMe = false;
@@ -56,11 +60,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> login() async {
-    await _saveLoginData();
+    String enteredCPF = cpfController.text.trim();
+    String enteredPassword = passwordController.text.trim();
+
+    if (enteredCPF == testCPF && enteredPassword == testSenha) {
+      await _saveLoginData();
+      await _loadLoginData();
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      showError("CPF ou senha inválidos.");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     String versao = "Versão 1.0.0";
     return PopScope(
         canPop: false,
@@ -73,6 +87,24 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 20, right: 20), // Ajuste a posição
+                      child: IconButton(
+                        icon: Icon(
+                          themeProvider.isDarkMode
+                              ? Icons.dark_mode
+                              : Icons.light_mode,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        onPressed: () {
+                          themeProvider.toggleTheme();
+                        },
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 40),
                   const Image(
                     image: AssetImage('assets/images/logo_simples_verde.png'),
