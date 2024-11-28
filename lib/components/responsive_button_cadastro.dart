@@ -16,7 +16,7 @@ class ResponsiveButtonCadastro extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Navegar para a tela 'home'
-        Navigator.pushReplacementNamed(context, '/cadastro');
+        Navigator.pushReplacementNamed(context, '/cadastroUsuario');
       },
       child: Container(
         width: width,
