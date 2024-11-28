@@ -86,6 +86,16 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
       );
+    } else if (widget.label == 'Senha:') {
+      return TextField(
+        enabled: widget.enabled,
+        controller: widget.controller,
+        decoration: inputDecoration,
+        obscureText: true,
+        style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+          color: themeProvider.themeData.colorScheme.onSurface,
+        ),
+      );
     } else {
       return TextField(
         controller: widget.controller,
