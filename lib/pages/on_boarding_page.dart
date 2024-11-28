@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/app_large_text.dart';
 import 'package:mobile_protege_meu_cerrado/components/app_text.dart';
-import 'package:mobile_protege_meu_cerrado/components/responsive_button.dart';
+import 'package:mobile_protege_meu_cerrado/components/responsive_button_cadastro.dart';
+import 'package:mobile_protege_meu_cerrado/components/responsive_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,8 +99,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         size: 18,
                       ),
                     ),
+                    Container(),
                     SizedBox(height: 40),
-                    ResponsiveButton(
+                    ResponsiveButtonLogin(
+                      width: 120,
+                    ),
+                    SizedBox(height: 18),
+                    ResponsiveButtonCadastro(
                       width: 120,
                     ),
                   ],

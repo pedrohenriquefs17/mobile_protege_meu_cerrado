@@ -40,7 +40,6 @@ class InfoCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     description,
-                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ],
               ),

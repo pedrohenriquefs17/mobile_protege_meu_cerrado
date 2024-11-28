@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class ResponsiveButton extends StatelessWidget {
+class ResponsiveButtonCadastro extends StatelessWidget {
   final bool? isResponsive;
   final double? width;
 
-  const ResponsiveButton({super.key, this.width, this.isResponsive = false});
+  const ResponsiveButtonCadastro(
+      {super.key, this.width, this.isResponsive = false});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class ResponsiveButton extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Navegar para a tela 'home'
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/cadastro');
       },
       child: Container(
         width: width,
@@ -27,7 +28,7 @@ class ResponsiveButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/images/btnImage2.png"),
+            Text("Cadastro"),
           ],
         ),
       ),

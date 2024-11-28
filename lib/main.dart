@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_protege_meu_cerrado/pages/cadastro_user_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/login_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/on_boarding_page.dart';
 import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +64,8 @@ class MainApp extends StatelessWidget {
                 home: snapshot.data,
                 routes: {
                   '/home': (context) => const HomeScreen(),
+                  '/login': (context) => const LoginPage(),
+                  '/cadastroUsuario': (context) => const CadastroUserPage(),
                 },
               );
             },
