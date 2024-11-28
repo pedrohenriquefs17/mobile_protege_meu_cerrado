@@ -15,6 +15,9 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  // Inicializando o PageController
+  final PageController _pageController = PageController();
+
   Future<void> _completeOnboarding(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_completed', true);
@@ -32,13 +35,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
   List text = [
     "Inovação",
     "Desenvolvimento",
-    "blabla",
+    "Transformação",
   ];
 
   List text2 = [
     "para o nosso Cerrado",
     "do nosso Meio Ambiente",
-    "daksnda",
+    "Conecte-se com a natureza",
   ];
 
   List text3 = [
@@ -53,25 +56,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
     return Scaffold(
       body: PageView.builder(
-        scrollDirection: Axis.vertical,
+        controller: _pageController, // Passando o controlador para o PageView
+        scrollDirection: Axis.horizontal, // Mudando para scroll horizontal
         itemCount: images.length,
         itemBuilder: (_, index) {
           return Stack(
             children: [
-              Positioned(
-                top: 40,
-                right: 20,
-                child: IconButton(
-                  icon: Icon(
-                    themeProvider.isDarkMode
-                        ? Icons.dark_mode
-                        : Icons.light_mode,
-                  ),
-                  onPressed: () {
-                    themeProvider.toggleTheme();
-                  },
-                ),
-              ),
               // Imagem no fundo, posicionada no final da tela
               Positioned(
                 bottom: 0,
@@ -137,19 +127,39 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     Container(),
-                    const SizedBox(height: 80),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ResponsiveButtonLogin(
-                          width: 140, // Ajuste proporcional da largura
-                        ),
-                        ResponsiveButtonCadastro(
-                          width:
-                              140, // Mesmo tamanho do outro botão para consistência
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 40),
+                    index == images.length - 1
+                        // Se for a última tela, exibe os botões de login e cadastro
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ResponsiveButtonLogin(
+                                width: 140, // Ajuste proporcional da largura
+                              ),
+                              ResponsiveButtonCadastro(
+                                width:
+                                    140, // Mesmo tamanho do outro botão para consistência
+                              ),
+                            ],
+                          )
+                        : Align(
+                            alignment: Alignment.center,
+                            child: GestureDetector(
+                              onTap: () {
+                                // Passa para a próxima tela usando o PageController
+                                _pageController.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color:
+                                    themeProvider.themeData.colorScheme.primary,
+                                size: 40,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),
