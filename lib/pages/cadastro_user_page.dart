@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -23,12 +24,19 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
   Future<void> cadastrar() async {
     final dio = Dio();
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
+
+    final DateFormat dataPadrao = DateFormat('dd/MM/yyyy');
+    final DateFormat dataFormatar = DateFormat('yyyy-MM-dd');
+    final DateTime dataMudar =
+        dataPadrao.parse(dataNascimentoController.text.trim());
+    final String dataFormatada = dataFormatar.format(dataMudar);
+
     final Map<String, dynamic> data = {
       "email": emailController.text.trim(),
       "senha": senhaController.text.trim(),
       "nome": nomeController.text.trim(),
       "cpf": cpfController.text.trim(),
-      "dataNascimento": dataNascimentoController.text.trim(),
+      "dataNascimento": dataFormatada,
       "telefone": telefoneController.text.trim(),
       "role": "USUARIO"
     };
