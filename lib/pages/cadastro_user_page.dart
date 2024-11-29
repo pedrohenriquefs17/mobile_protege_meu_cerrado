@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
+import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,10 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
   final TextEditingController telefoneController = TextEditingController();
+
+  Future<void> login() async {
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
   Future<void> cadastrar() async {
     final dio = Dio();
@@ -44,6 +49,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
     try {
       final Response response = await dio.post(url, data: data);
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        Navigator.pushReplacementNamed(context, '/login');
         debugPrint('Cadastrado com sucesso: ${response.data}');
       } else {
         debugPrint('Erro ao cadastrar: ${response.data}');
@@ -57,6 +63,26 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Cadastrar Ocorrências',
+          style: themeProvider.themeData.textTheme.titleLarge?.copyWith(
+            color: themeProvider.themeData.colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: themeProvider.themeData.colorScheme.surface,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: themeProvider.themeData.colorScheme
+                .onSurface, // aqui q fica a cor do ícone de volta
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -64,6 +90,24 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 20, right: 20), // Ajuste a posição
+                  child: IconButton(
+                    icon: Icon(
+                      themeProvider.isDarkMode
+                          ? Icons.dark_mode
+                          : Icons.light_mode,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    onPressed: () {
+                      themeProvider.toggleTheme();
+                    },
+                  ),
+                ),
+              ),
               SizedBox(height: 40),
               Image(
                 image: AssetImage('assets/images/logo_simples_verde.png'),
@@ -116,19 +160,14 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
                 enabled: true,
               ),
               SizedBox(height: 25),
-              ElevatedButton(
-                onPressed: () {
-                  cadastrar();
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(
-                    themeProvider.themeData.colorScheme.primary,
-                  ),
-                  foregroundColor: WidgetStateProperty.all(
-                    themeProvider.themeData.colorScheme.onPrimary,
-                  ),
-                ),
-                child: Text('Cadastrar'),
+              MyButton(
+                text: "Cadastrar",
+                onTap: cadastrar,
+              ),
+              SizedBox(height: 25),
+              MyButton(
+                text: "Login",
+                onTap: login,
               ),
             ],
           ),

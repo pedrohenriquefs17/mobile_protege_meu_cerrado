@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_recuperar_button.dart';
@@ -14,23 +15,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String testCPF = "15787925688";
-  String testSenha = "123456";
-  final TextEditingController cpfController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController senhaController = TextEditingController();
   bool rememberMe = false;
 
   Future<void> _loadLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? cpf = prefs.getString('cpf');
-    String? password = prefs.getString('password');
+    String? email = prefs.getString('email');
+    String? senha = prefs.getString('senha');
     bool? remember = prefs.getBool('rememberMe');
 
     if (remember == true) {
       setState(() {
-        cpfController.text = cpf ?? '';
-        passwordController.text = password ?? '';
+        emailController.text = email ?? '';
+        senhaController.text = senha ?? '';
         rememberMe = true;
       });
     }
@@ -39,12 +38,12 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _saveLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (rememberMe) {
-      prefs.setString('cpf', cpfController.text.trim());
-      prefs.setString('password', passwordController.text.trim());
+      prefs.setString('cpf', emailController.text.trim());
+      prefs.setString('senha', senhaController.text.trim());
       prefs.setBool('rememberMe', rememberMe);
     } else {
-      prefs.remove('cpf');
-      prefs.remove('password');
+      prefs.remove('email');
+      prefs.remove('senha');
       prefs.remove('rememberMe');
     }
   }
@@ -60,15 +59,27 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> login() async {
-    String enteredCPF = cpfController.text.trim();
-    String enteredPassword = passwordController.text.trim();
+    String enteredEmail = emailController.text.trim();
+    String enteredPassword = senhaController.text.trim();
 
-    if (enteredCPF == testCPF && enteredPassword == testSenha) {
-      await _saveLoginData();
-      await _loadLoginData();
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      showError("CPF ou senha inválidos.");
+    final dio = Dio();
+    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
+
+    final Map<String, dynamic> data = {
+      "email": emailController.text.trim(),
+      "senha": senhaController.text.trim(),
+    };
+
+    try {
+      final Response response = await dio.post(url, data: data);
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        Navigator.pushReplacementNamed(context, '/home');
+        debugPrint('Login realizado com sucesso: ${response.data}');
+      } else {
+        debugPrint('Erro ao fazer login: ${response.data}');
+      }
+    } catch (e) {
+      debugPrint('Erro ao fazer requisição: $e');
     }
   }
 
@@ -123,13 +134,13 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 30),
                   MyTextField(
-                    controller: cpfController,
+                    controller: emailController,
                     hintText: "CPF",
                     isPassword: false,
                   ),
                   const SizedBox(height: 20),
                   MyTextField(
-                    controller: passwordController,
+                    controller: senhaController,
                     hintText: "Senha",
                     isPassword: true,
                   ),
