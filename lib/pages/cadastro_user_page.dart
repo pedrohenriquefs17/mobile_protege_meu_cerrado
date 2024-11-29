@@ -65,13 +65,6 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          'Cadastrar Ocorrências',
-          style: themeProvider.themeData.textTheme.titleLarge?.copyWith(
-            color: themeProvider.themeData.colorScheme.onSurface,
-          ),
-        ),
-        backgroundColor: themeProvider.themeData.colorScheme.surface,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -79,7 +72,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
                 .onSurface, // aqui q fica a cor do ícone de volta
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop('/login');
           },
         ),
       ),

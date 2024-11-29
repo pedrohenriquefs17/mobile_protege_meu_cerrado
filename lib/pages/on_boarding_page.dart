@@ -162,7 +162,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               // Botão de navegação (setinha)
               if (index != images.length - 1)
                 Positioned(
-                  bottom: 450,
+                  bottom: 430,
                   left: 0,
                   right: 0,
                   child: Align(
@@ -185,7 +185,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
               // Botões no final (se for a última tela)
               Positioned(
-                bottom: 400,
+                bottom: 350,
                 left: 0,
                 right: 0,
                 child: index == images.length - 1
