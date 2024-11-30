@@ -28,7 +28,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
 
   Future<void> cadastrar() async {
     final dio = Dio();
-    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
+    const String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
 
     final DateFormat dataPadrao = DateFormat('dd/MM/yyyy');
     final DateFormat dataFormatar = DateFormat('yyyy-MM-dd');
@@ -78,7 +78,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -101,14 +101,14 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 40),
-              Image(
+              const SizedBox(height: 40),
+              const Image(
                 image: AssetImage('assets/images/logo_simples_verde.png'),
                 height: 150,
                 width: 150,
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Protege Meu Cerrado - Cadastro',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -116,42 +116,42 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               CustomTextfield(
                 controller: nomeController,
                 label: 'Nome Completo:',
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomTextfield(
                 controller: cpfController,
                 label: 'CPF:',
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomTextfield(
                 controller: dataNascimentoController,
                 label: 'Data de Nascimento:',
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomTextfield(
                 controller: telefoneController,
                 label: 'Telefone:',
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomTextfield(
                 controller: emailController,
                 label: 'E-mail:',
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomTextfield(
                 label: 'Senha:',
                 controller: senhaController,
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               MyButton(
                 text: "Cadastrar",
                 onTap: cadastrar,
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               MyButton(
                 text: "Login",
                 onTap: login,

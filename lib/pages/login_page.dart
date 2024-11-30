@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
     //String enteredPassword = senhaController.text.trim();
     debugPrint('Botão Entrar pressionado');
     final dio = Dio();
-    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
+    const String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
 
     final Map<String, dynamic> data = {
       "email": emailController.text.trim(),

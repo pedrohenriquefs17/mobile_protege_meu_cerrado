@@ -32,7 +32,7 @@ class ResponsiveButtonCadastro extends StatelessWidget {
             ),
           ], // Cor principal
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -40,7 +40,7 @@ class ResponsiveButtonCadastro extends StatelessWidget {
               color: Colors.white,
               size: 24,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               "Registrar",
               style: TextStyle(

@@ -119,7 +119,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               .themeData.textTheme.displayLarge?.color ??
                           Colors.black,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     AppText(
                       text: text3[index],
                       color:
@@ -127,7 +127,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               Colors.black,
                       size: 18,
                     ),
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     if (index == 0)
                       AppText(
                         text:
@@ -170,7 +170,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     child: PulsingButton(
                       onPressed: () {
                         _pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       },
@@ -189,14 +189,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 left: 0,
                 right: 0,
                 child: index == images.length - 1
-                    ? Row(
+                    ? const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ResponsiveButtonLogin(width: 140),
                           ResponsiveButtonCadastro(width: 140),
                         ],
                       )
-                    : SizedBox
+                    : const SizedBox
                         .shrink(), // Não exibe os botões de login e cadastro
               ),
             ],

@@ -54,7 +54,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                 ),
                 const SizedBox(width: 16), // Espaço entre os botões
                 // Spacer para empurrar o próximo botão para a direita
-                Spacer(),
+                const Spacer(),
                 // Botão "Minhas Ocorrências"
                 FloatingActionButton.extended(
                   onPressed: () {
