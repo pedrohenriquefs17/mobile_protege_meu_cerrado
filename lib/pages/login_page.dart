@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _loadLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
 
     String? email = prefs.getString('email');
     String? senha = prefs.getString('senha');
@@ -59,9 +60,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> login() async {
-    String enteredEmail = emailController.text.trim();
-    String enteredPassword = senhaController.text.trim();
-
+    // String enteredEmail = emailController.text.trim();
+    //String enteredPassword = senhaController.text.trim();
+    debugPrint('Botão Entrar pressionado');
     final dio = Dio();
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
 
@@ -168,6 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
+                  //ElevatedButton(onPressed: login, child: Text("Entrar")),
                   MyButton(
                     text: "Entrar",
                     onTap: login,

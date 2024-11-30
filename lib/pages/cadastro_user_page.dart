@@ -72,7 +72,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
                 .onSurface, // aqui q fica a cor do ícone de volta
           ),
           onPressed: () {
-            Navigator.of(context).pop('/login');
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -120,37 +120,31 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
               CustomTextfield(
                 controller: nomeController,
                 label: 'Nome Completo:',
-                enabled: true,
               ),
               SizedBox(height: 16),
               CustomTextfield(
                 controller: cpfController,
                 label: 'CPF:',
-                enabled: true,
               ),
               SizedBox(height: 16),
               CustomTextfield(
                 controller: dataNascimentoController,
                 label: 'Data de Nascimento:',
-                enabled: true,
               ),
               SizedBox(height: 16),
               CustomTextfield(
                 controller: telefoneController,
                 label: 'Telefone:',
-                enabled: true,
               ),
               SizedBox(height: 16),
               CustomTextfield(
                 controller: emailController,
                 label: 'E-mail:',
-                enabled: true,
               ),
               SizedBox(height: 16),
               CustomTextfield(
                 label: 'Senha:',
                 controller: senhaController,
-                enabled: true,
               ),
               SizedBox(height: 25),
               MyButton(

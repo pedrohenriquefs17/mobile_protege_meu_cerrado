@@ -1,10 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
+import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class NovaOcorrenciaPage extends StatefulWidget {
   const NovaOcorrenciaPage({super.key});
@@ -25,8 +26,38 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final List<XFile> _imagens = [];
   bool isSwitched = false;
 
-  String? opSelecionada;
-  final dropButtonOpcoes = ['Queimadas', 'Desmatamento', 'Caça Ilegal'];
+  final Dio _dio = Dio();
+  List<Map<String, dynamic>> _categorias = [];
+  String? _categoriaSelecionada;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategorias();
+  }
+
+  Future<void> _fetchCategorias() async {
+    try {
+      Response response = await _dio.get(
+        "https://pmc.airsoftcontrol.com.br/ocorrencias/categorias",
+        options: Options(
+          headers: {
+            "Accept": "*/*",
+            "User-Agent": "Flutter App",
+          },
+        ),
+      );
+
+      setState(() {
+        _categorias = List<Map<String, dynamic>>.from(response.data);
+      });
+    } catch (e) {
+      print("Erro ao carregar categorias: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro ao carregar categorias")),
+      );
+    }
+  }
 
   Future<void> _pegarImagem() async {
     final ImagePicker picker = ImagePicker();
@@ -36,10 +67,48 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     });
   }
 
+  Future<void> _enviarOcorrencia() async {
+    try {
+      final data = {
+        "id": null,
+        "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
+        "nome": isSwitched ? null : _nomeController.text,
+        "email": isSwitched ? null : _emailController.text,
+        "cpf": isSwitched ? null : _cpfController.text,
+        "telefone": null,
+        "dt_nasc": isSwitched ? null : _dataNascimentoController.text,
+        "descricao": _descricaoController.text,
+        "is_anon": isSwitched,
+        "dt_ocorrencia": _dataController.text,
+        "lat": "LATITUDE",
+        "lon": "LONGITUDE",
+      };
+
+      Response response = await _dio.post(
+        "https://pmc.airsoftcontrol.com.br/ocorrencias",
+        data: data,
+        options: Options(
+          headers: {
+            "Accept": "*/*",
+            "User-Agent": "Flutter App",
+          },
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ocorrência cadastrada com sucesso!")),
+      );
+    } catch (e) {
+      print("Erro ao enviar ocorrência: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro ao enviar ocorrência")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final posicaoController = Provider.of<PosicaoController>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -54,168 +123,89 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: themeProvider.themeData.colorScheme
-                .onSurface, // aqui q fica a cor do ícone de volta
+            color: themeProvider.themeData.colorScheme.onSurface,
           ),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ),
-      body: ListView(
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                'Denúncia Anônima',
-                style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-                  color: themeProvider.themeData.colorScheme.onSurface,
+        child: ListView(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Denúncia Anônima',
+                  style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+                    color: themeProvider.themeData.colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              Switch(
-                value: isSwitched,
-                onChanged: (bool value) {
-                  setState(() {
-                    isSwitched = value;
-                  });
-                },
-              ),
+                Switch(
+                  value: isSwitched,
+                  onChanged: (value) {
+                    setState(() {
+                      isSwitched = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            if (!isSwitched) ...[
+              CustomTextfield(
+                  controller: _nomeController, label: 'Nome Completo:'),
+              const SizedBox(height: 16),
+              CustomTextfield(controller: _emailController, label: 'E-mail:'),
+              const SizedBox(height: 16),
+              CustomTextfield(controller: _cpfController, label: 'CPF:'),
+              const SizedBox(height: 16),
+              CustomTextfield(
+                  controller: _dataNascimentoController,
+                  label: 'Data de Nascimento:'),
             ],
-          ),
-          SizedBox(height: 16),
-          CustomTextfield(
-            controller: _nomeController,
-            label: 'Nome Completo:',
-            enabled: !isSwitched,
-          ),
-          SizedBox(height: 16),
-          CustomTextfield(
-            controller: _emailController,
-            label: 'E-mail:',
-            enabled: !isSwitched,
-          ),
-          SizedBox(height: 16),
-          CustomTextfield(
-            controller: _cpfController,
-            label: 'CPF:',
-            enabled: !isSwitched,
-          ),
-          SizedBox(height: 16),
-          CustomTextfield(
-            controller: _dataNascimentoController,
-            label: 'Data de Nascimento:',
-            enabled: !isSwitched,
-          ),
-          SizedBox(height: 16),
-          DropdownButton<String>(
-            value: opSelecionada,
-            hint: Text('Selecione o Tipo de Ocorrência'),
-            items: dropButtonOpcoes.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                opSelecionada = newValue;
-              });
-            },
-          ),
-          SizedBox(height: 16),
-          CustomTextfield(
-            controller: _dataController,
-            label: 'Data da Ocorrência:',
-            enabled: !isSwitched,
-          ),
-          SizedBox(height: 16),
-          CustomTextfield(
-            controller: _descricaoController,
-            label: 'Descrição:',
-            enabled: !isSwitched,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Latitude: ${posicaoController.latitude}',
-            style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-              color: themeProvider.themeData.colorScheme.onSurface,
+            const SizedBox(height: 16),
+            DropdownButton<String>(
+              value: _categoriaSelecionada,
+              hint: const Text('Selecione o Tipo de Ocorrência'),
+              isExpanded: true,
+              items: _categorias.map((categoria) {
+                return DropdownMenuItem<String>(
+                  value: categoria['id'].toString(),
+                  child: Text(categoria['nome_categoria']),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _categoriaSelecionada = newValue;
+                });
+              },
             ),
-          ),
-          Text(
-            'Longitude: ${posicaoController.longitude}',
-            style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-              color: themeProvider.themeData.colorScheme.onSurface,
+            const SizedBox(height: 16),
+            CustomTextfield(
+                controller: _dataController, label: 'Data da Ocorrência:'),
+            const SizedBox(height: 16),
+            CustomTextfield(
+                controller: _descricaoController, label: 'Descrição:'),
+            const SizedBox(height: 16),
+            MyButton(
+              text: 'Selecionar Imagens',
+              onTap: _pegarImagem,
+              width: 150,
+              height: 40,
+              padding: const EdgeInsets.symmetric(vertical: 10),
             ),
-          ),
-          if (posicaoController.erro.isNotEmpty)
-            Text(
-              'Erro: ${posicaoController.erro}',
-              style: TextStyle(color: Colors.red),
+            const SizedBox(height: 16),
+            MyButton(
+              text: 'Salvar Ocorrência',
+              onTap: _enviarOcorrencia,
+              width: 150,
+              height: 40,
+              padding: const EdgeInsets.symmetric(vertical: 10),
             ),
-          SizedBox(height: 16),
-          _imagens.isEmpty
-              ? Text('Nenhuma imagem selecionada.')
-              : Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _imagens.map((imagem) {
-                    return Image.file(
-                      File(imagem.path),
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                    );
-                  }).toList(),
-                ),
-          SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _pegarImagem,
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(
-                themeProvider.themeData.colorScheme.primary,
-              ),
-              foregroundColor: WidgetStateProperty.all(
-                themeProvider.themeData.colorScheme.onPrimary,
-              ),
-            ),
-            child: Text('Selecionar Imagens'),
-          ),
-          SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              final titulo = _tituloController.text;
-              final descricao = _descricaoController.text;
-              final imagens = _imagens;
-              final data = _dataController.text;
-              final nome = _nomeController.text;
-              final cpf = _cpfController.text;
-              final dataNascimento = _dataNascimentoController.text;
-              final email = _emailController.text;
-
-              debugPrint('Título: $titulo');
-              debugPrint('Descrição: $descricao');
-              debugPrint('Data: $data');
-              debugPrint('Nome: $nome');
-              debugPrint('CPF: $cpf');
-              debugPrint('Data de Nascimento: $dataNascimento');
-              debugPrint('E-mail: $email');
-              for (var imagem in imagens) {
-                debugPrint('Imagem: ${imagem.path}');
-              }
-            },
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(
-                themeProvider.themeData.colorScheme.secondary,
-              ),
-              foregroundColor: WidgetStateProperty.all(
-                themeProvider.themeData.colorScheme.onSecondary,
-              ),
-            ),
-            child: Text('Salvar Ocorrência'),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

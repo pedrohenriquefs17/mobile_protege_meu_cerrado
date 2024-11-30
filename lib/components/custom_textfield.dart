@@ -6,12 +6,10 @@ import 'package:provider/provider.dart';
 class CustomTextfield extends StatefulWidget {
   final String label;
   final TextEditingController controller;
-  final bool enabled;
   const CustomTextfield({
     super.key,
     required this.label,
     required this.controller,
-    required this.enabled,
   });
 
   @override
@@ -61,7 +59,6 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       );
     } else if (widget.label == 'Data de Nascimento:') {
       return TextField(
-        enabled: widget.enabled,
         controller: widget.controller,
         decoration: inputDecoration,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
@@ -71,7 +68,6 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       );
     } else if (widget.label == 'CPF:') {
       return TextField(
-        enabled: widget.enabled,
         controller: widget.controller,
         decoration: inputDecoration,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
@@ -81,7 +77,6 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       );
     } else if (widget.label == 'Nome Completo:' || widget.label == 'E-mail:') {
       return TextField(
-        enabled: widget.enabled,
         controller: widget.controller,
         decoration: inputDecoration,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
@@ -90,7 +85,6 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       );
     } else if (widget.label == 'Senha:') {
       return TextField(
-        enabled: widget.enabled,
         controller: widget.controller,
         decoration: inputDecoration,
         obscureText: true,
@@ -100,7 +94,6 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       );
     } else if (widget.label == 'Telefone:') {
       return TextField(
-        enabled: widget.enabled,
         controller: widget.controller,
         decoration: inputDecoration,
         inputFormatters: [maskFormatterTelefone],
