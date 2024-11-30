@@ -23,6 +23,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final TextEditingController _dataNascimentoController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final teste = 0;
   final List<XFile> _imagens = [];
   bool isSwitched = false;
 
