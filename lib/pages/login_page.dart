@@ -20,6 +20,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController senhaController = TextEditingController();
   bool rememberMe = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadLoginData();
+  }
+
   Future<void> _loadLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
@@ -40,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _saveLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (rememberMe) {
-      prefs.setString('cpf', emailController.text.trim());
+      prefs.setString('email', emailController.text.trim());
       prefs.setString('senha', senhaController.text.trim());
       prefs.setBool('rememberMe', rememberMe);
     } else {
@@ -63,6 +69,8 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> login() async {
     // String enteredEmail = emailController.text.trim();
     //String enteredPassword = senhaController.text.trim();
+    _saveLoginData();
+
     debugPrint('Botão Entrar pressionado');
     final dio = Dio();
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
@@ -86,8 +94,10 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: 16.0,
         );
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {   //descobri essa função para tirar o warning
-          Navigator.pushReplacementNamed(context, '/home');  //o pushnamed não pode ser chamado diretamente
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          //descobri essa função para tirar o warning
+          Navigator.pushReplacementNamed(
+              context, '/home'); //o pushnamed não pode ser chamado diretamente
         });
       } else {
         debugPrint('Erro ao fazer login: ${response.data}');

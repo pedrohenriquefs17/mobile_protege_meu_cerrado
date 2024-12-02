@@ -161,7 +161,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                         icon: Icon(
                                           Icons.thumb_up_alt_outlined,
                                           color: themeProvider
-                                              .themeData.colorScheme.primary,
+                                              .themeData.colorScheme.secondary,
                                         ),
                                         onPressed: () {
                                           // Lógica para curtir
@@ -173,9 +173,10 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                   Row(
                                     children: [
                                       IconButton(
-                                        icon: const Icon(
+                                        icon: Icon(
                                           Icons.comment_outlined,
-                                          color: Colors.grey,
+                                          color: themeProvider
+                                              .themeData.colorScheme.secondary,
                                         ),
                                         onPressed: () {
                                           // Lógica para comentar
