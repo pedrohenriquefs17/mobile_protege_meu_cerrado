@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
@@ -35,6 +38,9 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   void initState() {
     super.initState();
     _fetchCategorias();
+
+    final String dataAtual = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _dataController.text = dataAtual;
   }
 
   Future<void> _fetchCategorias() async {
@@ -51,6 +57,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
       setState(() {
         _categorias = List<Map<String, dynamic>>.from(response.data);
+        print("id_categoria: ${_categoriaSelecionada}");
       });
     } catch (e) {
       print("Erro ao carregar categorias: $e");
@@ -69,6 +76,8 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   }
 
   Future<void> _enviarOcorrencia() async {
+    final posicaoController =
+        Provider.of<PosicaoController>(context, listen: false);
     try {
       final data = {
         "id": null,
@@ -81,11 +90,21 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
         "descricao": _descricaoController.text,
         "is_anon": isSwitched,
         "dt_ocorrencia": _dataController.text,
-        "lat": "LATITUDE",
-        "lon": "LONGITUDE",
+        "lat": posicaoController.latitude,
+        "lon": posicaoController.longitude,
       };
+      print("Dados enviados: $data");
 
-      Response response = await _dio.post(
+      if (_descricaoController.text.isEmpty || _dataController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text("Por favor, preencha todos os campos obrigatórios.")),
+        );
+        return;
+      }
+
+      Response response = await _dio.put(
         "https://pmc.airsoftcontrol.com.br/ocorrencias",
         data: data,
         options: Options(
@@ -101,6 +120,10 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       );
     } catch (e) {
       print("Erro ao enviar ocorrência: $e");
+      if (e is DioError) {
+        print("Resposta do servidor: ${e.response?.data}");
+      }
+      print("Erro ao enviar ocorrência: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Erro ao enviar ocorrência")),
       );
@@ -110,6 +133,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final posicaoController = Provider.of<PosicaoController>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -190,6 +214,34 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
             CustomTextfield(
                 controller: _descricaoController, label: 'Descrição:'),
             const SizedBox(height: 16),
+            Text(
+              'Latitude: ${posicaoController.latitude}',
+              style: themeProvider.themeData.textTheme.bodyLarge,
+            ),
+            Text(
+              'Longitude: ${posicaoController.longitude}',
+              style: themeProvider.themeData.textTheme.bodyLarge,
+            ),
+            if (posicaoController.erro.isNotEmpty)
+              Text(
+                'Erro: ${posicaoController.erro}',
+                style: TextStyle(color: Colors.red),
+              ),
+            SizedBox(height: 16),
+            _imagens.isEmpty
+                ? Text('Nenhuma imagem selecionada. mamando')
+                : Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _imagens.map((imagem) {
+                      return Image.file(
+                        File(imagem.path),
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      );
+                    }).toList(),
+                  ),
             MyButton(
               text: 'Selecionar Imagens',
               onTap: _pegarImagem,

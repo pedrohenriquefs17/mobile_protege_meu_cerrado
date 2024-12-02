@@ -11,11 +11,11 @@ class PosicaoController extends ChangeNotifier {
   }
 
   getPosicao() async {
-    try{
+    try {
       Position posicao = await _posicaoAtual();
       latitude = posicao.latitude;
       longitude = posicao.longitude;
-    }catch(e){
+    } catch (e) {
       erro = e.toString();
     }
     notifyListeners();
@@ -42,7 +42,7 @@ class PosicaoController extends ChangeNotifier {
         throw 'Permissão de localização negada';
       }
     }
-    
+
     return await Geolocator.getCurrentPosition();
   }
 }
