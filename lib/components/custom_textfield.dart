@@ -57,7 +57,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         ),
         maxLines: 5,
       );
-    } else if (widget.label == 'Data de Nascimento:') {
+    } else if (widget.label == 'Data de Nascimento:' ||
+        widget.label == 'Data da Ocorrência:') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,

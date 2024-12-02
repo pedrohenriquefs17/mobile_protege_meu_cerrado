@@ -18,7 +18,6 @@ class NovaOcorrenciaPage extends StatefulWidget {
 }
 
 class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
-  final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
   final TextEditingController _dataController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
@@ -39,7 +38,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     super.initState();
     _fetchCategorias();
 
-    final String dataAtual = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final String dataAtual = DateFormat('dd/MM/yyy').format(DateTime.now());
     _dataController.text = dataAtual;
   }
 
@@ -57,7 +56,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
       setState(() {
         _categorias = List<Map<String, dynamic>>.from(response.data);
-        print("id_categoria: ${_categoriaSelecionada}");
+        print("id_categoria: $_categoriaSelecionada");
       });
     } catch (e) {
       print("Erro ao carregar categorias: $e");
@@ -75,7 +74,25 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     });
   }
 
+  Future<void> _formatarData() async {
+    final DateFormat dataPadrao = DateFormat('dd/MM/yyyy');
+    final DateFormat dataFormatar = DateFormat('yyyy-MM-dd');
+    //data nascimento
+    final DateTime dataMudarNascimento =
+        dataPadrao.parse(_dataNascimentoController.text.trim());
+    final String dataFormatadaNascimento =
+        dataFormatar.format(dataMudarNascimento);
+    _dataNascimentoController.text = dataFormatadaNascimento;
+    //data ocorrencia
+    final DateTime dataMudarOcorrencia =
+        dataPadrao.parse(_dataController.text.trim());
+    final String dataFormatadaOcorrencia =
+        dataFormatar.format(dataMudarOcorrencia);
+    _dataController.text = dataFormatadaOcorrencia;
+  }
+
   Future<void> _enviarOcorrencia() async {
+    _formatarData();
     final posicaoController =
         Provider.of<PosicaoController>(context, listen: false);
     try {
@@ -93,7 +110,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
         "lat": posicaoController.latitude,
         "lon": posicaoController.longitude,
       };
-      print("Dados enviados: $data");
+      debugPrint("Dados enviados: $data");
 
       if (_descricaoController.text.isEmpty || _dataController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -119,11 +136,11 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
         const SnackBar(content: Text("Ocorrência cadastrada com sucesso!")),
       );
     } catch (e) {
-      print("Erro ao enviar ocorrência: $e");
-      if (e is DioError) {
-        print("Resposta do servidor: ${e.response?.data}");
+      debugPrint("Erro ao enviar ocorrência: $e");
+      if (e is DioException) {
+        debugPrint("Resposta do servidor: ${e.response?.data}");
       }
-      print("Erro ao enviar ocorrência: $e");
+      debugPrint("Erro ao enviar ocorrência: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Erro ao enviar ocorrência")),
       );
@@ -215,11 +232,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
                 controller: _descricaoController, label: 'Descrição:'),
             const SizedBox(height: 16),
             Text(
-              'Latitude: ${posicaoController.latitude}',
-              style: themeProvider.themeData.textTheme.bodyLarge,
-            ),
-            Text(
-              'Longitude: ${posicaoController.longitude}',
+              'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
               style: themeProvider.themeData.textTheme.bodyLarge,
             ),
             if (posicaoController.erro.isNotEmpty)
@@ -229,7 +242,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
               ),
             SizedBox(height: 16),
             _imagens.isEmpty
-                ? Text('Nenhuma imagem selecionada. mamando')
+                ? Text('Nenhuma imagem selecionada.')
                 : Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -242,6 +255,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
                       );
                     }).toList(),
                   ),
+            const SizedBox(height: 16),
             MyButton(
               text: 'Selecionar Imagens',
               onTap: _pegarImagem,

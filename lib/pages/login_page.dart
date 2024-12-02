@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_recuperar_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_textfield.dart';
@@ -74,10 +75,23 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final Response response = await dio.post(url, data: data);
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        Navigator.pushReplacementNamed(context, '/home');
         debugPrint('Login realizado com sucesso: ${response.data}');
+        Fluttertoast.showToast(
+          msg: "Login realizado com sucesso!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {   //descobri essa função para tirar o warning
+          Navigator.pushReplacementNamed(context, '/home');  //o pushnamed não pode ser chamado diretamente
+        });
       } else {
         debugPrint('Erro ao fazer login: ${response.data}');
+        Fluttertoast.showToast(msg: 'Erro ao fazer login.');
       }
     } catch (e) {
       debugPrint('Erro ao fazer requisição: $e');

@@ -29,6 +29,7 @@ dependencies:
   flutter_native_splash: ^2.2.10 # Adicione aqui a versão do pacote
   mask_text_input_formatter: ^2.9.0
   geolocator: ^13.0.2
+  fluttertoast: ^8.2.8
 
 dev_dependencies:
   flutter_test:
