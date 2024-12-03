@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _loadProfileImage(); // Carregar imagem de perfil quando a tela for aberta
+    _loadProfileImage();
   }
 
   // Função para carregar a imagem de perfil
@@ -42,19 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
     String? imagePath = prefs.getString('profileImage');
     if (imagePath != null) {
       setState(() {
-        _image = File(imagePath);
+        _image = File(imagePath); // Carregar a imagem salva
+      });
+    } else {
+      setState(() {
+        _image =
+            null; // Se não houver imagem, manter null ou usar uma imagem padrão
       });
     }
-  }
-
-  // Função chamada ao tocar no ícone do perfil
-  void _onProfileTap() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const PerfilPage()),
-    ).then((_) {
-      _loadProfileImage(); // Recarregar imagem após voltar da tela de perfil
-    });
   }
 
   void _onNavTap(int index) {
@@ -72,15 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
-              onTap: _onProfileTap, // Ao clicar, abre a tela de perfil
-              child: CircleAvatar(
-                radius: 20,
-                backgroundImage: _image != null
-                    ? FileImage(_image!)
-                    : const AssetImage('assets/images/default_profile.png')
-                        as ImageProvider,
-              ),
+            CircleAvatar(
+              radius: 20,
+              backgroundImage: _image != null
+                  ? FileImage(_image!)
+                  : const AssetImage('assets/images/default_profile.png')
+                      as ImageProvider,
             ),
             const SizedBox(width: 30),
             const Text(
@@ -197,6 +189,7 @@ class HomeContent extends StatelessWidget {
                       'assets/images/animal1.jpg',
                       'assets/images/animal2.jpg',
                       'assets/images/animal3.jpg',
+                      'assets/images/animal4.jpg',
                     ].map((url) {
                       return Builder(
                         builder: (BuildContext context) {

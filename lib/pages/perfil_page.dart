@@ -65,20 +65,6 @@ class _PerfilPageState extends State<PerfilPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Perfil'),
-        actions: [
-          // Ícone circular da foto do perfil no AppBar
-          GestureDetector(
-            onTap: _pickImage, // Permite ao usuário mudar a foto do perfil
-            child: CircleAvatar(
-              radius: 20,
-              backgroundImage: _image != null
-                  ? FileImage(_image!) // Exibe a imagem do arquivo
-                  : const AssetImage('assets/images/default_profile.png')
-                      as ImageProvider, // Imagem padrão
-            ),
-          ),
-          const SizedBox(width: 10), // Espaçamento entre a foto e o título
-        ],
       ),
       body: Center(
         child: Column(
