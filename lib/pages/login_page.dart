@@ -83,6 +83,10 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final Response response = await dio.post(url, data: data);
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', response.data['token']);
+        await prefs.setInt('idUsuario', response.data['idUsuario']);
+        
         debugPrint('Login realizado com sucesso: ${response.data}');
         Fluttertoast.showToast(
           msg: "Login realizado com sucesso!",
