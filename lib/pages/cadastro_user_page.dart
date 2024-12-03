@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
@@ -49,10 +50,23 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
     try {
       final Response response = await dio.post(url, data: data);
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        Navigator.pushReplacementNamed(context, '/login');
         debugPrint('Cadastrado com sucesso: ${response.data}');
+        Fluttertoast.showToast(
+          msg: "Cadastro realizado com sucesso!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacementNamed(context, '/login');
+        });
       } else {
         debugPrint('Erro ao cadastrar: ${response.data}');
+        Fluttertoast.showToast(msg: 'Erro ao cadastrar.');
       }
     } catch (e) {
       debugPrint('Erro ao fazer requisição: $e');

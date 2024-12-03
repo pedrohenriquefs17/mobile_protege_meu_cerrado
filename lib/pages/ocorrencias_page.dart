@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:mobile_protege_meu_cerrado/pages/minhas_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -61,7 +62,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NovaOcorrenciaPage(),
+                        builder: (context) => const MinhasOcorrenciasPage(),
                       ),
                     );
                   },
