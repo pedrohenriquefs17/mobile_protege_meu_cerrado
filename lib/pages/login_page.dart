@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_recuperar_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_textfield.dart';
-import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

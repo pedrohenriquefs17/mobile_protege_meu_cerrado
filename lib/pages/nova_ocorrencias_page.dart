@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
+import 'package:mobile_protege_meu_cerrado/pages/sel_localizacao_maps.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -256,6 +257,18 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
                     }).toList(),
                   ),
             const SizedBox(height: 16),
+            MyButton(
+              text: 'Capturar Localização',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => SelLocalizacaoMaps()),
+                );
+              },
+              width: 150,
+              height: 40,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            SizedBox(height: 16),
             MyButton(
               text: 'Selecionar Imagens',
               onTap: _pegarImagem,
