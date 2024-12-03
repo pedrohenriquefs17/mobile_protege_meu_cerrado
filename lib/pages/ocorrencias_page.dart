@@ -54,24 +54,25 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                   elevation: 4,
                 ),
                 const SizedBox(width: 16), // Espaço entre os botões
-                // Spacer para empurrar o próximo botão para a direita
-                Spacer(),
                 // Botão "Minhas Ocorrências"
-                FloatingActionButton.extended(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MinhasOcorrenciasPage(),
-                      ),
-                    );
-                  },
-                  label: const Text('Minhas Ocorrências'),
-                  icon: const Icon(Icons.list),
-                  backgroundColor: themeProvider.themeData.colorScheme.primary,
-                  foregroundColor:
-                      themeProvider.themeData.colorScheme.onPrimary,
-                  elevation: 4,
+                Flexible(
+                  child: FloatingActionButton.extended(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MinhasOcorrenciasPage(),
+                        ),
+                      );
+                    },
+                    label: const Text('Minhas Ocorrências'),
+                    icon: const Icon(Icons.list),
+                    backgroundColor:
+                        themeProvider.themeData.colorScheme.primary,
+                    foregroundColor:
+                        themeProvider.themeData.colorScheme.onPrimary,
+                    elevation: 4,
+                  ),
                 ),
               ],
             ),
