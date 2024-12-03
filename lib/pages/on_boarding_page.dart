@@ -54,29 +54,30 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: PageView.builder(
-        controller: _pageController, // Passando o controlador para o PageView
-        scrollDirection: Axis.horizontal, // Mudando para scroll horizontal
+        controller: _pageController,
+        scrollDirection: Axis.horizontal,
         itemCount: images.length,
         itemBuilder: (_, index) {
           return Stack(
             children: [
-              // Imagem no fundo, posicionada no final da tela
               Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: Image.asset(
-                  "assets/images/" + images[index],
-                  fit: BoxFit.cover, // Ajusta a largura à tela
-                ),
+                child: index != images.length - 1
+                    ? Image.asset(
+                        "assets/images/" + images[index],
+                        fit: BoxFit.cover,
+                      )
+                    : SizedBox.shrink(),
               ),
 
-              // Indicadores de página
               Positioned(
-                bottom: 40, // Indicadores abaixo do conteúdo principal
+                bottom: screenHeight * 0.1,
                 left: 0,
                 right: 0,
                 child: Row(
@@ -100,7 +101,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
               // Conteúdo no topo
               Positioned(
-                top: 150, // Ajustando a posição do conteúdo
+                top: screenHeight * 0.1,
                 left: 20,
                 right: 20,
                 child: Column(
@@ -159,33 +160,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ),
 
-              // Botão de navegação (setinha)
+              //navegação (setinha)
               if (index != images.length - 1)
-                Positioned(
-                  bottom: 430,
-                  left: 0,
-                  right: 0,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: PulsingButton(
-                      onPressed: () {
-                        _pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: themeProvider.themeData.colorScheme.primary,
-                        size: 40,
+                Flexible(
+                  child: Positioned(
+                    bottom: screenHeight * 0.02,
+                    left: 0,
+                    right: 0,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: PulsingButton(
+                        onPressed: () {
+                          _pageController.nextPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: themeProvider.themeData.colorScheme.secondary,
+                          size: 40,
+                        ),
                       ),
                     ),
                   ),
                 ),
 
-              // Botões no final (se for a última tela)
               Positioned(
-                bottom: 350,
+                bottom: 150,
                 left: 0,
                 right: 0,
                 child: index == images.length - 1
@@ -196,8 +198,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ResponsiveButtonCadastro(width: 140),
                         ],
                       )
-                    : SizedBox
-                        .shrink(), // Não exibe os botões de login e cadastro
+                    : SizedBox.shrink(),
               ),
             ],
           );
