@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
 import 'package:mobile_protege_meu_cerrado/components/info_card.dart';
+import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/perfil_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/config_page..dart';
 import 'package:mobile_protege_meu_cerrado/pages/ocorrencias_page.dart';
@@ -135,6 +136,7 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -209,12 +211,52 @@ class HomeContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Atalhos',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                  const SizedBox(height: 10),
+                  FloatingActionButton.extended(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NovaOcorrenciaPage(),
+                        ),
+                      );
+                    },
+                    label: const Text('Nova Ocorrência'),
+                    icon: const Icon(Icons.add),
+                    backgroundColor:
+                        themeProvider.themeData.colorScheme.primary,
+                    foregroundColor:
+                        themeProvider.themeData.colorScheme.onPrimary,
+                    elevation: 4,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
             // Informações Divididas em Blocos
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    'Descubra mais sobre o Meio Ambiente',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF38B887),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   InfoCard(
                     title: 'Queimadas',
                     description:

@@ -59,4 +59,3 @@ ThemeData darkMode = ThemeData(
     hintStyle: TextStyle(color: AppColors.cinzaEscuro), // Placeholder
   ),
 );
-
