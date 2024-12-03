@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
@@ -15,6 +14,7 @@ class PerfilPage extends StatefulWidget {
 
 class _PerfilPageState extends State<PerfilPage> {
   File? _image; // Armazenará a imagem do perfil
+  File? _imageToSave; // Armazenará a imagem selecionada, antes de salvar
 
   @override
   void initState() {
@@ -48,13 +48,21 @@ class _PerfilPageState extends State<PerfilPage> {
         await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _image = File(pickedFile.path);
+        _imageToSave = File(pickedFile.path);
+        _image = _imageToSave; // Atualiza a visualização imediatamente
       });
+    }
+  }
 
-      // Salvar a imagem no SharedPreferences
+// Função para salvar a imagem selecionada
+  Future<void> _saveImage() async {
+    if (_imageToSave != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('profileImage', pickedFile.path);
-      print('Imagem salva: ${pickedFile.path}'); // Debugging
+      await prefs.setString('profileImage', _imageToSave!.path);
+      print('Imagem salva: ${_imageToSave!.path}'); // Debugging
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Imagem de perfil salva com sucesso!')),
+      );
     }
   }
 
@@ -82,6 +90,12 @@ class _PerfilPageState extends State<PerfilPage> {
             ElevatedButton(
               onPressed: _pickImage,
               child: const Text('Escolher Imagem'),
+            ),
+            const SizedBox(height: 20),
+            // Botão para salvar a imagem selecionada
+            ElevatedButton(
+              onPressed: _saveImage,
+              child: const Text('Salvar Imagem'),
             ),
           ],
         ),

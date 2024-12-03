@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _loadProfileImage();
+    _loadProfileImage(); // Recarrega a imagem sempre que a tela for carregada
   }
 
   // Função para carregar a imagem de perfil

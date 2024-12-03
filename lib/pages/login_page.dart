@@ -66,12 +66,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  bool _isLoading = false;
+
   Future<void> login() async {
+    setState(() {
+      _isLoading = true; // Exibe o carregamento
+    });
+
     String enteredEmail = emailController.text.trim();
     String enteredPassword = senhaController.text.trim();
     await _saveLoginData();
 
-    debugPrint('Tentando login com email: $enteredEmail');
     final dio = Dio();
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
 
@@ -83,20 +88,12 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final Response response = await dio.post(url, data: data);
 
-      // Exibir informações da resposta
-      debugPrint('Tipo da resposta: ${response.data.runtimeType}');
-      debugPrint('Dados da resposta: ${response.data}');
-
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final responseData = response.data;
-
-        // Verificar se tokenDTO e idUsuario estão presentes
         if (responseData['tokenDTO'] != null &&
             responseData['tokenDTO']['token'] != null &&
             responseData['idUsuario'] != null) {
           final String token = responseData['tokenDTO']['token'];
-
-          // Garantir que idUsuario seja um int
           final int idUsuario =
               int.tryParse(responseData['idUsuario'].toString()) ?? 0;
 
@@ -104,33 +101,30 @@ class _LoginPageState extends State<LoginPage> {
           await prefs.setString('token', token);
           await prefs.setInt('idUsuario', idUsuario);
 
-          debugPrint(
-              'Login realizado com sucesso. Token: $token, ID: $idUsuario');
           Fluttertoast.showToast(
             msg: "Login realizado com sucesso!",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0,
           );
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            // Navegar para a tela principal
             Navigator.pushReplacementNamed(context, '/home');
           });
         } else {
-          // Caso os dados não sejam encontrados corretamente
           Fluttertoast.showToast(msg: 'Erro ao processar os dados de login.');
         }
       } else {
-        debugPrint('Erro ao fazer login: ${response.data}');
         Fluttertoast.showToast(msg: 'Erro ao fazer login.');
       }
     } catch (e) {
-      debugPrint('Erro ao fazer requisição: $e');
       Fluttertoast.showToast(msg: 'Erro na requisição. Tente novamente.');
+    } finally {
+      setState(() {
+        _isLoading = false; // Finaliza o carregamento
+      });
     }
   }
 
@@ -200,10 +194,11 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  //ElevatedButton(onPressed: login, child: Text("Entrar")),
                   MyButton(
-                    text: "Entrar",
-                    onTap: login,
+                    text: _isLoading ? "Aguarde..." : "Entrar",
+                    onTap: _isLoading
+                        ? null
+                        : login, // Desativa o botão enquanto carrega
                   ),
                   const SizedBox(height: 80),
                   Center(
