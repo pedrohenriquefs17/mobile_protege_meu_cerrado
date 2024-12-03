@@ -30,6 +30,7 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   geolocator: ^13.0.2
   fluttertoast: ^8.2.8
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

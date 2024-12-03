@@ -67,54 +67,75 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> login() async {
-    // String enteredEmail = emailController.text.trim();
-    //String enteredPassword = senhaController.text.trim();
-    _saveLoginData();
+    String enteredEmail = emailController.text.trim();
+    String enteredPassword = senhaController.text.trim();
+    await _saveLoginData();
 
-    debugPrint('Botão Entrar pressionado');
+    debugPrint('Tentando login com email: $enteredEmail');
     final dio = Dio();
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
 
     final Map<String, dynamic> data = {
-      "email": emailController.text.trim(),
-      "senha": senhaController.text.trim(),
+      "email": enteredEmail,
+      "senha": enteredPassword,
     };
 
     try {
       final Response response = await dio.post(url, data: data);
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', response.data['token']);
-        await prefs.setInt('idUsuario', response.data['idUsuario']);
-        
-        debugPrint('Login realizado com sucesso: ${response.data}');
-        Fluttertoast.showToast(
-          msg: "Login realizado com sucesso!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          //descobri essa função para tirar o warning
-          Navigator.pushReplacementNamed(
-              context, '/home'); //o pushnamed não pode ser chamado diretamente
-        });
+      // Exibir informações da resposta
+      debugPrint('Tipo da resposta: ${response.data.runtimeType}');
+      debugPrint('Dados da resposta: ${response.data}');
+
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final responseData = response.data;
+
+        // Verificar se tokenDTO e idUsuario estão presentes
+        if (responseData['tokenDTO'] != null &&
+            responseData['tokenDTO']['token'] != null &&
+            responseData['idUsuario'] != null) {
+          final String token = responseData['tokenDTO']['token'];
+
+          // Garantir que idUsuario seja um int
+          final int idUsuario =
+              int.tryParse(responseData['idUsuario'].toString()) ?? 0;
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+          await prefs.setInt('idUsuario', idUsuario);
+
+          debugPrint(
+              'Login realizado com sucesso. Token: $token, ID: $idUsuario');
+          Fluttertoast.showToast(
+            msg: "Login realizado com sucesso!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            // Navegar para a tela principal
+            Navigator.pushReplacementNamed(context, '/home');
+          });
+        } else {
+          // Caso os dados não sejam encontrados corretamente
+          Fluttertoast.showToast(msg: 'Erro ao processar os dados de login.');
+        }
       } else {
         debugPrint('Erro ao fazer login: ${response.data}');
         Fluttertoast.showToast(msg: 'Erro ao fazer login.');
       }
     } catch (e) {
       debugPrint('Erro ao fazer requisição: $e');
+      Fluttertoast.showToast(msg: 'Erro na requisição. Tente novamente.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     String versao = "Versão 1.0.0";
     return PopScope(
         canPop: false,
@@ -127,24 +148,6 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20, right: 20), // Ajuste a posição
-                      child: IconButton(
-                        icon: Icon(
-                          themeProvider.isDarkMode
-                              ? Icons.dark_mode
-                              : Icons.light_mode,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        onPressed: () {
-                          themeProvider.toggleTheme();
-                        },
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 40),
                   const Image(
                     image: AssetImage('assets/images/logo_simples_verde.png'),

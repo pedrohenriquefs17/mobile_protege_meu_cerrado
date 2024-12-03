@@ -6,10 +6,18 @@ import 'package:provider/provider.dart';
 class CustomTextfield extends StatefulWidget {
   final String label;
   final TextEditingController controller;
-  const CustomTextfield({
+  final String? mensagemErro;
+  final bool obscureText;
+  final ValueChanged<String>? onChanged;
+
+  @immutable
+  CustomTextfield({
     super.key,
     required this.label,
     required this.controller,
+    this.mensagemErro,
+    this.obscureText = false,
+    this.onChanged,
   });
 
   @override
@@ -36,6 +44,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           themeProvider.themeData.inputDecorationTheme.hintStyle?.copyWith(
         color: themeProvider.themeData.colorScheme.onSurface.withOpacity(0.6),
       ),
+      errorText: widget.mensagemErro,
       enabledBorder: UnderlineInputBorder(
         borderSide: BorderSide(
           color: themeProvider.themeData.colorScheme.onSurface.withOpacity(0.6),
@@ -48,55 +57,67 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       ),
     );
 
-    if (widget.label == 'Descrição:') {
+    if (widget.label == 'Descrição') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
         maxLines: 5,
       );
-    } else if (widget.label == 'Data de Nascimento:' ||
-        widget.label == 'Data da Ocorrência:') {
+    } else if (widget.label == 'Data de Nascimento' ||
+        widget.label == 'Data da Ocorrência') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
         inputFormatters: [maskFormatterData],
       );
-    } else if (widget.label == 'CPF:') {
+    } else if (widget.label == 'CPF') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
         inputFormatters: [maskFormatterCpf],
       );
-    } else if (widget.label == 'Nome Completo:' || widget.label == 'E-mail:') {
+    } else if (widget.label == 'Nome Completo' || widget.label == 'E-mail') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
       );
-    } else if (widget.label == 'Senha:') {
+    } else if (widget.label == 'Senha') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
-        obscureText: true,
+        onChanged: widget.onChanged,
+        obscureText:
+            widget.label == 'Senha' || widget.label == 'Confirmar Senha',
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
       );
-    } else if (widget.label == 'Telefone:') {
+    } else if (widget.label == 'Telefone') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
         inputFormatters: [maskFormatterTelefone],
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
@@ -106,6 +127,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),

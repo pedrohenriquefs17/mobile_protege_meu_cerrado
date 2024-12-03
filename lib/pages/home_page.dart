@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
 import 'package:mobile_protege_meu_cerrado/components/info_card.dart';
-import 'package:mobile_protege_meu_cerrado/pages/blog_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/perfil_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/config_page..dart';
 import 'package:mobile_protege_meu_cerrado/pages/ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,14 +20,42 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  File? _image;
 
   // Lista de páginas para navegação
   final List<Widget> _pages = [
     const HomeContent(),
     const OcorrenciasPage(),
-    const BlogPage(),
+    const PerfilPage(),
     const ConfiguracoesPage(),
   ];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadProfileImage(); // Carregar imagem de perfil quando a tela for aberta
+  }
+
+  // Função para carregar a imagem de perfil
+  Future<void> _loadProfileImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? imagePath = prefs.getString('profileImage');
+    if (imagePath != null) {
+      setState(() {
+        _image = File(imagePath);
+      });
+    }
+  }
+
+  // Função chamada ao tocar no ícone do perfil
+  void _onProfileTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PerfilPage()),
+    ).then((_) {
+      _loadProfileImage(); // Recarregar imagem após voltar da tela de perfil
+    });
+  }
 
   void _onNavTap(int index) {
     setState(() {
@@ -38,18 +69,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Protege Meu Cerrado'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: _onProfileTap, // Ao clicar, abre a tela de perfil
+              child: CircleAvatar(
+                radius: 20,
+                backgroundImage: _image != null
+                    ? FileImage(_image!)
+                    : const AssetImage('assets/images/default_profile.png')
+                        as ImageProvider,
+              ),
             ),
-            onPressed: () {
-              themeProvider.toggleTheme();
-            },
-          ),
-        ],
+            const SizedBox(width: 30),
+            const Text(
+              'Protege Meu Cerrado',
+              style: TextStyle(color: Colors.white),
+            ),
+            const SizedBox(width: 30), // Espaçamento entre o título e o toggle
+            IconButton(
+              icon: Icon(
+                themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                themeProvider.toggleTheme();
+              },
+            ),
+          ],
+        ),
+        centerTitle: true, // Garante que o título esteja centralizado
       ),
       body: Stack(
         children: [

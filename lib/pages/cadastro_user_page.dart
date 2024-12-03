@@ -21,13 +21,35 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
       TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
+  final TextEditingController confirmacaoSenhaController =
+      TextEditingController();
   final TextEditingController telefoneController = TextEditingController();
+  String? mensagemErro;
+
+  void validarSenha() {
+    setState(() {
+      if (senhaController.text != confirmacaoSenhaController.text) {
+        mensagemErro = 'Senhas não conferem!';
+      } else {
+        mensagemErro = null;
+        print('Senhas válidas');
+      }
+    });
+  }
 
   Future<void> login() async {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
   Future<void> cadastrar() async {
+    if (mensagemErro != null) {
+      Fluttertoast.showToast(
+        msg: "Corrija os erros antes de prosseguir!",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
     final dio = Dio();
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
 
@@ -76,102 +98,114 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: themeProvider.themeData.colorScheme
-                .onSurface, // aqui q fica a cor do ícone de volta
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20, right: 20), // Ajuste a posição
-                  child: IconButton(
-                    icon: Icon(
-                      themeProvider.isDarkMode
-                          ? Icons.dark_mode
-                          : Icons.light_mode,
-                      color: Theme.of(context).colorScheme.onSurface,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 40),
+            // Logo
+            Center(
+              child: Image.asset(
+                'assets/images/logo_simples_verde.png',
+                height: 120,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Título
+            Text(
+              'Cadastre seu usuário',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w600,
+                color: themeProvider.themeData.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // Formulário de cadastro
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.only(top: 10),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    CustomTextfield(
+                      controller: nomeController,
+                      label: 'Nome Completo',
                     ),
-                    onPressed: () {
-                      themeProvider.toggleTheme();
-                    },
-                  ),
+                    const SizedBox(height: 10),
+                    CustomTextfield(
+                      controller: cpfController,
+                      label: 'CPF',
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextfield(
+                      controller: dataNascimentoController,
+                      label: 'Data de Nascimento',
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextfield(
+                      controller: telefoneController,
+                      label: 'Telefone',
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextfield(
+                      controller: emailController,
+                      label: 'E-mail',
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextfield(
+                      controller: senhaController,
+                      label: 'Senha',
+                      obscureText: true,
+                      onChanged: (text) => validarSenha(),
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextfield(
+                      controller: confirmacaoSenhaController,
+                      label: 'Confirmar Senha',
+                      obscureText: true,
+                      onChanged: (text) => validarSenha(),
+                    ),
+                    if (mensagemErro != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          mensagemErro!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              SizedBox(height: 40),
-              Image(
-                image: AssetImage('assets/images/logo_simples_verde.png'),
-                height: 150,
-                width: 150,
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Protege Meu Cerrado - Cadastro',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 20),
-              CustomTextfield(
-                controller: nomeController,
-                label: 'Nome Completo:',
-              ),
-              SizedBox(height: 16),
-              CustomTextfield(
-                controller: cpfController,
-                label: 'CPF:',
-              ),
-              SizedBox(height: 16),
-              CustomTextfield(
-                controller: dataNascimentoController,
-                label: 'Data de Nascimento:',
-              ),
-              SizedBox(height: 16),
-              CustomTextfield(
-                controller: telefoneController,
-                label: 'Telefone:',
-              ),
-              SizedBox(height: 16),
-              CustomTextfield(
-                controller: emailController,
-                label: 'E-mail:',
-              ),
-              SizedBox(height: 16),
-              CustomTextfield(
-                label: 'Senha:',
-                controller: senhaController,
-              ),
-              SizedBox(height: 25),
-              MyButton(
-                text: "Cadastrar",
-                onTap: cadastrar,
-              ),
-              SizedBox(height: 25),
-              MyButton(
-                text: "Login",
-                onTap: login,
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 20),
+
+            // Botão "Cadastrar"
+            MyButton(
+              text: "Cadastrar",
+              onTap: cadastrar,
+            ),
+            const SizedBox(height: 10),
+
+            // Botão "Login"
+            MyButton(
+              text: "Já possui conta? Login",
+              onTap: login,
+            ),
+          ],
         ),
       ),
     );

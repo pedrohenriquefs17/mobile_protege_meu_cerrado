@@ -30,8 +30,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           label: 'Ocorrências',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.book),
-          label: 'Blog',
+          icon: Icon(Icons.person),
+          label: 'Perfil',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),

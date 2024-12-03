@@ -197,15 +197,15 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
             ),
             if (!isSwitched) ...[
               CustomTextfield(
-                  controller: _nomeController, label: 'Nome Completo:'),
+                  controller: _nomeController, label: 'Nome Completo'),
               const SizedBox(height: 16),
-              CustomTextfield(controller: _emailController, label: 'E-mail:'),
+              CustomTextfield(controller: _emailController, label: 'E-mail'),
               const SizedBox(height: 16),
-              CustomTextfield(controller: _cpfController, label: 'CPF:'),
+              CustomTextfield(controller: _cpfController, label: 'CPF'),
               const SizedBox(height: 16),
               CustomTextfield(
                   controller: _dataNascimentoController,
-                  label: 'Data de Nascimento:'),
+                  label: 'Data de Nascimento'),
             ],
             const SizedBox(height: 16),
             DropdownButton<String>(
@@ -226,10 +226,10 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
             ),
             const SizedBox(height: 16),
             CustomTextfield(
-                controller: _dataController, label: 'Data da Ocorrência:'),
+                controller: _dataController, label: 'Data da Ocorrência'),
             const SizedBox(height: 16),
             CustomTextfield(
-                controller: _descricaoController, label: 'Descrição:'),
+                controller: _descricaoController, label: 'Descrição'),
             const SizedBox(height: 16),
             Text(
               'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
