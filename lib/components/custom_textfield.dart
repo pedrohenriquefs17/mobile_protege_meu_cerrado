@@ -11,7 +11,7 @@ class CustomTextfield extends StatefulWidget {
   final ValueChanged<String>? onChanged;
 
   @immutable
-  CustomTextfield({
+  const CustomTextfield({
     super.key,
     required this.label,
     required this.controller,

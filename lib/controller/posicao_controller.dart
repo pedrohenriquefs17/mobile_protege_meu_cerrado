@@ -10,6 +10,12 @@ class PosicaoController extends ChangeNotifier {
     getPosicao();
   }
 
+  void atualizarPosicao(double lat, double long) {
+    latitude = lat;
+    longitude = long;
+    notifyListeners();
+  }
+
   getPosicao() async {
     try {
       Position posicao = await _posicaoAtual();

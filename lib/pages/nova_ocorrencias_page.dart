@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
@@ -232,9 +233,13 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
             CustomTextfield(
                 controller: _descricaoController, label: 'Descrição'),
             const SizedBox(height: 16),
-            Text(
-              'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
-              style: themeProvider.themeData.textTheme.bodyLarge,
+            Consumer<PosicaoController>(
+              builder: (context, posicaoController, child) {
+                return Text(
+                  'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
+                  style: themeProvider.themeData.textTheme.bodyLarge,
+                );
+              },
             ),
             if (posicaoController.erro.isNotEmpty)
               Text(
@@ -259,10 +264,20 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
             const SizedBox(height: 16),
             MyButton(
               text: 'Capturar Localização',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => SelLocalizacaoMaps()),
+              onTap: () async {
+                final LatLng? novaPosicao = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => SelLocalizacaoMaps(
+                            latitudeInicial: posicaoController.latitude,
+                            longitudeInicial: posicaoController.longitude,
+                          )),
                 );
+                if (novaPosicao != null) {
+                  setState(() {
+                    posicaoController.latitude = novaPosicao.latitude;
+                    posicaoController.longitude = novaPosicao.longitude;
+                  });
+                }
               },
               width: 150,
               height: 40,

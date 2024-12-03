@@ -256,7 +256,7 @@ class HomeContent extends StatelessWidget {
                       color: Color(0xFF38B887),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   InfoCard(
                     title: 'Queimadas',
                     description:

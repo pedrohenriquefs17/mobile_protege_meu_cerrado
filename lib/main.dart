@@ -13,7 +13,10 @@ Future<void> main() async {
   final themeProvider = ThemeProvider();
   await themeProvider.carregarTema();
 
-  runApp(MainApp(themeProvider: themeProvider));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
+    ChangeNotifierProvider(create: (_) => PosicaoController()),
+  ], child: MainApp(themeProvider: themeProvider)));
 }
 
 class MainApp extends StatelessWidget {
