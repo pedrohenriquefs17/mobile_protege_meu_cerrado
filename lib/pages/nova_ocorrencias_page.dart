@@ -27,6 +27,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final TextEditingController _dataNascimentoController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _telefoneController = TextEditingController();
   final teste = 0;
   final List<XFile> _imagens = [];
   bool isSwitched = false;
@@ -104,7 +105,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
         "nome": isSwitched ? null : _nomeController.text,
         "email": isSwitched ? null : _emailController.text,
         "cpf": isSwitched ? null : _cpfController.text,
-        "telefone": null,
+        "telefone": isSwitched ? null : _telefoneController.text,
         "dt_nasc": isSwitched ? null : _dataNascimentoController.text,
         "descricao": _descricaoController.text,
         "is_anon": isSwitched,
@@ -208,6 +209,9 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
               CustomTextfield(
                   controller: _dataNascimentoController,
                   label: 'Data de Nascimento'),
+              const SizedBox(height: 16),
+              CustomTextfield(
+                  controller: _telefoneController, label: 'Telefone'),
             ],
             const SizedBox(height: 16),
             DropdownButton<String>(

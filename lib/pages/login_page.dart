@@ -120,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       Fluttertoast.showToast(msg: 'Erro na requisição. Tente novamente.');
+      debugPrint(e.toString());
     } finally {
       setState(() {
         _isLoading = false; // Finaliza o carregamento
