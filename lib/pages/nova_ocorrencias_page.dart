@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
@@ -11,6 +12,7 @@ import 'package:mobile_protege_meu_cerrado/pages/sel_localizacao_maps.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NovaOcorrenciaPage extends StatefulWidget {
   const NovaOcorrenciaPage({super.key});
@@ -98,55 +100,51 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     _formatarData();
     final posicaoController =
         Provider.of<PosicaoController>(context, listen: false);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final dio = Dio();
+
+    final String url = 'https://pmc.airsoftcontrol.com.br/ocorrencias';
+
+    final Map<String, dynamic> data = {
+      "id_user": isSwitched ? null : prefs.getInt('idUsuario').toString(),
+      "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
+      "nome": isSwitched ? null : _nomeController.text.trim(),
+      "email": isSwitched ? null : _emailController.text.trim(),
+      "cpf": isSwitched ? null : _cpfController.text.trim(),
+      "telefone": isSwitched ? null : _telefoneController.text.trim(),
+      "dt_nasc": isSwitched ? null : _dataNascimentoController.text.trim(),
+      "descricao": _descricaoController.text.trim(),
+      "is_anon": isSwitched,
+      "dt_ocorrencia": _dataController.text.trim(),
+      "latitude": posicaoController.latitude.toString(),
+      "longitude": posicaoController.longitude.toString(),
+    };
+    debugPrint('Data: $data');
+
     try {
-      final data = {
-        "id": null,
-        "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
-        "nome": isSwitched ? null : _nomeController.text,
-        "email": isSwitched ? null : _emailController.text,
-        "cpf": isSwitched ? null : _cpfController.text,
-        "telefone": isSwitched ? null : _telefoneController.text,
-        "dt_nasc": isSwitched ? null : _dataNascimentoController.text,
-        "descricao": _descricaoController.text,
-        "is_anon": isSwitched,
-        "dt_ocorrencia": _dataController.text,
-        "lat": posicaoController.latitude,
-        "lon": posicaoController.longitude,
-      };
-      debugPrint("Dados enviados: $data");
+      final Response response = await dio.post(url, data: data);
 
-      if (_descricaoController.text.isEmpty || _dataController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content:
-                  Text("Por favor, preencha todos os campos obrigatórios.")),
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final responseData = response.data;
+        Fluttertoast.showToast(
+          msg: responseData['Ocorrência cadastrada com sucesso!'],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
         );
-        return;
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).pop();
+        });
+      } else {
+        debugPrint('Erro ao cadastrar ocorrência: ${response.data}');
+        Fluttertoast.showToast(msg: 'Erro ao cadastrar ocorrência.');
       }
-
-      Response response = await _dio.put(
-        "https://pmc.airsoftcontrol.com.br/ocorrencias",
-        data: data,
-        options: Options(
-          headers: {
-            "Accept": "*/*",
-            "User-Agent": "Flutter App",
-          },
-        ),
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Ocorrência cadastrada com sucesso!")),
-      );
     } catch (e) {
-      debugPrint("Erro ao enviar ocorrência: $e");
-      if (e is DioException) {
-        debugPrint("Resposta do servidor: ${e.response?.data}");
-      }
-      debugPrint("Erro ao enviar ocorrência: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erro ao enviar ocorrência")),
-      );
+      debugPrint('Erro na requisição: $e');
     }
   }
 
