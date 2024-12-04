@@ -54,6 +54,7 @@ flutter:
     - assets/images/btnImage2.png
     - assets/images/logo_simples_verde.png
     - assets/images/logo_complexa.png
+    - assets/images/fundonovo.png
 
   uses-material-design: true
 

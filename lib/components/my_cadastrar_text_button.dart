@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_protege_meu_cerrado/pages/cadastro_user_page.dart';
 
-class MyRecuperarTxtbutton extends StatelessWidget {
-  const MyRecuperarTxtbutton({super.key});
+class MyCadastrarTxtbutton extends StatelessWidget {
+  const MyCadastrarTxtbutton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +12,18 @@ class MyRecuperarTxtbutton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CadastroUserPage(),
+                ),
+              );
+            },
             child: Container(
               alignment: Alignment.centerRight,
               child: Text(
-                'Recuperar Senha',
+                'Não possui conta? Cadastre-se',
                 style: TextStyle(
                   color: Color(0xFF38B887),
                   decoration: TextDecoration.underline,

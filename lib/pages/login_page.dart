@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
+import 'package:mobile_protege_meu_cerrado/components/my_cadastrar_text_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_recuperar_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -128,52 +129,79 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    String versao = "Versão 1.0.0";
-    return PopScope(
-        canPop: false,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          body: Center(
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Imagem de fundo
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/fundonovo.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Conteúdo centralizado
+          Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 40),
-                  const Image(
-                    image: AssetImage('assets/images/logo_simples_verde.png'),
-                    width: 200,
-                    height: 200,
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Protege Meu Cerrado",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+              child: Container(
+                padding: const EdgeInsets.all(24.0),
+                margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withOpacity(0.9), // Fundo semitransparente
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-                  const SizedBox(height: 30),
-                  MyTextField(
-                    controller: emailController,
-                    hintText: "E-mail",
-                    isPassword: false,
-                  ),
-                  const SizedBox(height: 20),
-                  MyTextField(
-                    controller: senhaController,
-                    hintText: "Senha",
-                    isPassword: true,
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Logo
+                    const Image(
+                      image: AssetImage('assets/images/logo_simples_verde.png'),
+                      width: 120,
+                      height: 120,
+                    ),
+                    const SizedBox(height: 20),
+                    // Título centralizado
+                    Center(
+                      child: Text(
+                        "Protege Meu Cerrado",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    // Campos de texto
+                    MyTextField(
+                      controller: emailController,
+                      hintText: "E-mail",
+                      isPassword: false,
+                    ),
+                    const SizedBox(height: 20),
+                    MyTextField(
+                      controller: senhaController,
+                      hintText: "Senha",
+                      isPassword: true,
+                    ),
+                    const SizedBox(height: 10),
+                    // Botão "Lembrar de mim" e "Esqueci a senha"
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
@@ -188,30 +216,26 @@ class _LoginPageState extends State<LoginPage> {
                             const Text("Lembrar de mim"),
                           ],
                         ),
-                        const MyRecuperarTxtbutton(),
                       ],
                     ),
-                  ),
-                  MyButton(
-                    text: _isLoading ? "Aguarde..." : "Entrar",
-                    onTap: _isLoading
-                        ? null
-                        : login, // Desativa o botão enquanto carrega
-                  ),
-                  const SizedBox(height: 80),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        versao,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
+
+                    const SizedBox(height: 10),
+                    // Botão de login
+                    MyButton(
+                      text: _isLoading ? "Aguarde..." : "Entrar",
+                      onTap: _isLoading ? null : login,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    const MyRecuperarTxtbutton(),
+                    // Botão de cadastrar
+                    const MyCadastrarTxtbutton(),
+                  ],
+                ),
               ),
             ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 }

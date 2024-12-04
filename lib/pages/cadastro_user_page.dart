@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
+import 'package:mobile_protege_meu_cerrado/pages/confirmacao_cadastro_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +40,29 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
 
   Future<void> login() async {
     Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  Future<void> irParaConfirmcao() async {
+    if (mensagemErro != null) {
+      Fluttertoast.showToast(
+        msg: "Corrija os erros antes de prosseguir!",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ConfirmacaoPage(
+            nome: nomeController.text.trim(),
+            cpf: cpfController.text.trim(),
+            dataNascimento: dataNascimentoController.text.trim(),
+            telefone: telefoneController.text.trim(),
+            email: emailController.text.trim(),
+          ),
+        ));
   }
 
   Future<void> cadastrar() async {
@@ -100,113 +124,125 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 40),
-            // Logo
-            Center(
-              child: Image.asset(
-                'assets/images/logo_simples_verde.png',
-                height: 120,
+      body: Stack(
+        children: [
+          // Imagem de fundo
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                    'assets/images/fundonovo.png'), // Caminho da imagem
+                fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 20),
-            // Título
-            Text(
-              'Cadastre seu usuário',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w600,
-                color: themeProvider.themeData.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // Formulário de cadastro
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.only(top: 10),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+          ),
+          // Conteúdo da tela
+          Center(
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(24.0),
+                margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withOpacity(0.9), // Fundo semitransparente
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    CustomTextfield(
-                      controller: nomeController,
-                      label: 'Nome Completo',
+                    Text(
+                      'Cadastre seu usuário',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displayLarge,
                     ),
-                    const SizedBox(height: 10),
-                    CustomTextfield(
-                      controller: cpfController,
-                      label: 'CPF',
-                    ),
-                    const SizedBox(height: 10),
-                    CustomTextfield(
-                      controller: dataNascimentoController,
-                      label: 'Data de Nascimento',
-                    ),
-                    const SizedBox(height: 10),
-                    CustomTextfield(
-                      controller: telefoneController,
-                      label: 'Telefone',
-                    ),
-                    const SizedBox(height: 10),
-                    CustomTextfield(
-                      controller: emailController,
-                      label: 'E-mail',
-                    ),
-                    const SizedBox(height: 10),
-                    CustomTextfield(
-                      controller: senhaController,
-                      label: 'Senha',
-                      obscureText: true,
-                      onChanged: (text) => validarSenha(),
-                    ),
-                    const SizedBox(height: 10),
-                    CustomTextfield(
-                      controller: confirmacaoSenhaController,
-                      label: 'Confirmar Senha',
-                      obscureText: true,
-                      onChanged: (text) => validarSenha(),
-                    ),
-                    if (mensagemErro != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Text(
-                          mensagemErro!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
-                          ),
+                    const SizedBox(height: 30),
+
+                    // Formulário de cadastro
+                    Column(
+                      children: [
+                        CustomTextfield(
+                          controller: nomeController,
+                          label: 'Nome Completo',
                         ),
+                        const SizedBox(height: 10),
+                        CustomTextfield(
+                          controller: cpfController,
+                          label: 'CPF',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextfield(
+                          controller: dataNascimentoController,
+                          label: 'Data de Nascimento',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextfield(
+                          controller: telefoneController,
+                          label: 'Telefone',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextfield(
+                          controller: emailController,
+                          label: 'E-mail',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextfield(
+                          controller: senhaController,
+                          label: 'Senha',
+                          obscureText: true,
+                          onChanged: (text) => validarSenha(),
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextfield(
+                          controller: confirmacaoSenhaController,
+                          label: 'Confirmar Senha',
+                          obscureText: true,
+                          onChanged: (text) => validarSenha(),
+                        ),
+                        if (mensagemErro != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              mensagemErro!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Botão "Cadastrar"
+                    MyButton(
+                      text: "Cadastrar",
+                      onTap: irParaConfirmcao,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Botão "Login"
+                    TextButton(
+                      onPressed: login,
+                      child: const Text(
+                        "Já possui conta? Login",
+                        style: TextStyle(fontSize: 14),
                       ),
+                    ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-
-            // Botão "Cadastrar"
-            MyButton(
-              text: "Cadastrar",
-              onTap: cadastrar,
-            ),
-            const SizedBox(height: 10),
-
-            // Botão "Login"
-            MyButton(
-              text: "Já possui conta? Login",
-              onTap: login,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
