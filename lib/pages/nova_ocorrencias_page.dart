@@ -106,7 +106,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     final String url = 'https://pmc.airsoftcontrol.com.br/ocorrencias';
 
     final Map<String, dynamic> data = {
-      "id_user": isSwitched ? null : prefs.getInt('idUsuario').toString(),
+      "id_user": prefs.getInt('idUsuario'),
       "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
       "nome": isSwitched ? null : _nomeController.text.trim(),
       "email": isSwitched ? null : _emailController.text.trim(),
@@ -116,8 +116,8 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       "descricao": _descricaoController.text.trim(),
       "is_anon": isSwitched,
       "dt_ocorrencia": _dataController.text.trim(),
-      "latitude": posicaoController.latitude.toString(),
-      "longitude": posicaoController.longitude.toString(),
+      "lat": posicaoController.latitude.toString(),
+      "lon": posicaoController.longitude.toString(),
     };
     debugPrint('Data: $data');
 
@@ -127,7 +127,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final responseData = response.data;
         Fluttertoast.showToast(
-          msg: responseData['Ocorrência cadastrada com sucesso!'],
+          msg: responseData.toString(),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
