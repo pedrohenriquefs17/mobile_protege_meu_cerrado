@@ -27,7 +27,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _loadLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
 
     String? email = prefs.getString('email');
     String? senha = prefs.getString('senha');
@@ -77,6 +76,16 @@ class _LoginPageState extends State<LoginPage> {
     await _saveLoginData();
 
     final dio = Dio();
+
+    // Recupera o token do SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+
+    // Configura o cabeçalho de autorização, se o token existir
+    if (token != null) {
+      dio.options.headers['Authorization'] = 'Bearer $token';
+    }
+
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
 
     final Map<String, dynamic> data = {
@@ -85,7 +94,11 @@ class _LoginPageState extends State<LoginPage> {
     };
 
     try {
-      final Response response = await dio.post(url, data: data);
+      final Response response = await dio.post(
+        url,
+        data: data,
+        options: Options(contentType: Headers.jsonContentType),
+      );
 
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final responseData = response.data;
@@ -96,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
           final int idUsuario =
               int.tryParse(responseData['idUsuario'].toString()) ?? 0;
 
-          final prefs = await SharedPreferences.getInstance();
+          // Salva o token e id do usuário no SharedPreferences
           await prefs.setString('token', token);
           await prefs.setInt('idUsuario', idUsuario);
 
@@ -114,13 +127,17 @@ class _LoginPageState extends State<LoginPage> {
           });
         } else {
           Fluttertoast.showToast(msg: 'Erro ao processar os dados de login.');
+          debugPrint('Data being sent: $data');
         }
       } else {
-        Fluttertoast.showToast(msg: 'Erro ao fazer login.');
+        Fluttertoast.showToast(
+            msg: 'Erro ao fazer login. Status: ${response.statusCode}');
+        debugPrint('Data being sent: $data');
       }
     } catch (e) {
       Fluttertoast.showToast(msg: 'Erro na requisição. Tente novamente.');
-      debugPrint(e.toString());
+      debugPrint('Erro na requisição: $e');
+      debugPrint('Data being sent: $data');
     } finally {
       setState(() {
         _isLoading = false; // Finaliza o carregamento
