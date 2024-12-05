@@ -10,7 +10,8 @@ import flutter_config
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-    GMSServices.provideAPIKey("chave coloca aqui")
+    NSString* mapsApiKey = [[NSProcessInfo processInfo] environment][@"MAPS_API_KEY"];
+    [GMSServices provideAPIKey:mapsApiKey];
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
