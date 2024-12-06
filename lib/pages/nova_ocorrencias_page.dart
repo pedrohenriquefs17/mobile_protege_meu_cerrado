@@ -32,7 +32,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final TextEditingController _telefoneController = TextEditingController();
   final teste = 0;
   final List<XFile> _imagens = [];
-  bool isSwitched = false;
+  bool isSwitched = true;
 
   final Dio _dio = Dio();
   List<Map<String, dynamic>> _categorias = [];
