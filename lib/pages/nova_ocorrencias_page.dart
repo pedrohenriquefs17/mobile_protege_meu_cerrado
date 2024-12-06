@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -31,7 +32,8 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   final TextEditingController _telefoneController = TextEditingController();
   final teste = 0;
   final List<XFile> _imagens = [];
-  bool isSwitched = true;
+  bool isSwitched = false;
+  bool isLogado = false;
 
   final Dio _dio = Dio();
   List<Map<String, dynamic>> _categorias = [];
@@ -147,8 +149,19 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     }
   }
 
+  Future<void> _estaLogado() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? idUsuario = prefs.getInt('idUsuario');
+    if (idUsuario != null && idUsuario > 0) {
+      isLogado = true;
+    } else {
+      isLogado = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _estaLogado();
     final themeProvider = Provider.of<ThemeProvider>(context);
     final posicaoController = Provider.of<PosicaoController>(context);
 
@@ -187,26 +200,39 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
                       color: themeProvider.themeData.colorScheme.onSurface,
                     ),
                   ),
-                  Switch(
-                    value: isSwitched,
-                    onChanged: (value) {
-                      setState(() {
-                        isSwitched = value;
-                      });
-                    },
-                  ),
+                  if (isLogado) ...[
+                    Switch(
+                      value: isSwitched,
+                      onChanged: (value) {
+                        setState(() {
+                          isSwitched = value;
+                        });
+                      },
+                    ),
+                  ],
                 ],
               ),
-              if (!isSwitched) ...[
-                CustomTextfield(
-                    controller: _nomeController, label: 'Nome Completo'),
-                CustomTextfield(controller: _emailController, label: 'E-mail'),
-                CustomTextfield(controller: _cpfController, label: 'CPF'),
-                CustomTextfield(
+              if (!isLogado) ...[
+                  CustomTextfield(
+                    controller: _nomeController,
+                    label: 'Nome',
+                  ),
+                  CustomTextfield(
+                    controller: _emailController,
+                    label: 'E-mail',
+                  ),
+                  CustomTextfield(
+                    controller: _cpfController,
+                    label: 'CPF',
+                  ),
+                  CustomTextfield(
+                    controller: _telefoneController,
+                    label: 'Telefone',
+                  ),
+                  CustomTextfield(
                     controller: _dataNascimentoController,
-                    label: 'Data de Nascimento'),
-                CustomTextfield(
-                    controller: _telefoneController, label: 'Telefone'),
+                    label: 'Data de Nascimento',
+                  ),
               ],
               const SizedBox(height: 16),
               DropdownButton<String>(
