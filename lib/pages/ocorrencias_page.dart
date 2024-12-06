@@ -102,10 +102,10 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                             viewportFraction: 0.8,
                           ),
                           items: [
-                            'https://via.placeholder.com/400x200.png?text=Imagem+1',
-                            'https://via.placeholder.com/400x200.png?text=Imagem+2',
-                            'https://via.placeholder.com/400x200.png?text=Imagem+3',
-                          ].map((url) {
+                            'assets/images/queimada1.jpeg',
+                            'assets/images/queimada2.jpg',
+                            'assets/images/queimada3.jpg',
+                          ].map((path) {
                             return Builder(
                               builder: (BuildContext context) {
                                 return ClipRRect(
@@ -113,8 +113,8 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                     topLeft: Radius.circular(16),
                                     topRight: Radius.circular(16),
                                   ),
-                                  child: Image.network(
-                                    url,
+                                  child: Image.asset(
+                                    path,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                   ),
@@ -123,6 +123,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                             );
                           }).toList(),
                         ),
+
                         Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(
