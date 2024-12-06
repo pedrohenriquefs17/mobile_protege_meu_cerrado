@@ -44,7 +44,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     // A label com o asterisco vermelho, se o campo for obrigatório e ainda não preenchido
     String labelComAsterisco = widget.label;
     if (widget.obrigatorio && widget.controller.text.isEmpty) {
-      labelComAsterisco = widget.label + ' *'; // Adiciona o asterisco
+      labelComAsterisco = '${widget.label} *'; // Adiciona o asterisco
     }
 
     // Criação do decoration com a label que inclui o asterisco

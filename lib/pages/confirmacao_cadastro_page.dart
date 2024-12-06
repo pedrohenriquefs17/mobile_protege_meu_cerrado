@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:http/http.dart' as http;
 
@@ -23,18 +24,31 @@ class ConfirmacaoPage extends StatelessWidget {
     required this.senha,
   });
 
+  Future<String> _formatarData() async {
+    final DateFormat dataPadrao = DateFormat('dd/MM/yyyy');
+    final DateFormat dataFormatar = DateFormat('yyyy-MM-dd');
+    //data nascimento
+    final DateTime dataMudarNascimento = dataPadrao.parse(dataNascimento);
+    final String dataFormatadaNascimento =
+        dataFormatar.format(dataMudarNascimento);
+    return dataFormatadaNascimento;
+  }
+
   Future<void> cadastrar(BuildContext context) async {
-    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
+    String dataNascimentoFormatada = _formatarData() as String;
+
+    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/cadastro';
 
     final Map<String, dynamic> data = {
       "email": email,
       "senha": senha,
       "nome": nome,
       "cpf": cpf,
-      "dataNascimento": dataNascimento,
+      "dataNascimento": dataNascimentoFormatada,
       "telefone": telefone,
       "role": "USUARIO",
     };
+    debugPrint('Data: $data');
 
     try {
       final response = await http.post(
@@ -55,17 +69,19 @@ class ConfirmacaoPage extends StatelessWidget {
         });
       } else {
         Fluttertoast.showToast(
-          msg: 'Erro ao cadastrar: ${response.body}',
+          msg: 'Erro ao cadastrar!',
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );
+        debugPrint('Erro ao cadastrar: ${response.body}');
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: "Erro: $e",
+        msg: "Erro na requisição!",
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
+      debugPrint('Erro na requisição: $e');
     }
   }
 

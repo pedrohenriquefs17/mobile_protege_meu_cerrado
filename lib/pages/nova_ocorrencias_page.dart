@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_textfield.dart';
-import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
 import 'package:mobile_protege_meu_cerrado/pages/sel_localizacao_maps.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';

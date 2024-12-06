@@ -90,7 +90,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
       return;
     }
 
-    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
+    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/cadastro';
 
     final DateFormat dataPadrao = DateFormat('dd/MM/yyyy');
     final DateFormat dataFormatar = DateFormat('yyyy-MM-dd');
@@ -105,7 +105,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
       "cpf": cpfController.text.trim(),
       "dataNascimento": dataFormatada,
       "telefone": telefoneController.text.trim(),
-      "role": "USUARIO"
+      "role": "USER"
     };
 
     debugPrint('Dados enviados: $data');

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_cadastrar_text_button.dart';
@@ -78,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
     String enteredPassword = senhaController.text.trim();
     await _saveLoginData();
 
-    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
+    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/login';
 
     final Map<String, dynamic> data = {
       "email": enteredEmail,
