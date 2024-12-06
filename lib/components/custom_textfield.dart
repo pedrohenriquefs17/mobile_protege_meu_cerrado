@@ -9,8 +9,8 @@ class CustomTextfield extends StatefulWidget {
   final String? mensagemErro;
   final bool obscureText;
   final ValueChanged<String>? onChanged;
+  final bool obrigatorio;
 
-  @immutable
   const CustomTextfield({
     super.key,
     required this.label,
@@ -18,6 +18,7 @@ class CustomTextfield extends StatefulWidget {
     this.mensagemErro,
     this.obscureText = false,
     this.onChanged,
+    this.obrigatorio = false,
   });
 
   @override
@@ -28,18 +29,28 @@ class _CustomTextfieldState extends State<CustomTextfield> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    var maskFormatterData = MaskTextInputFormatter(
-        mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
-    var maskFormatterCpf = MaskTextInputFormatter(
-        mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
-    var maskFormatterTelefone = MaskTextInputFormatter(
-        mask: '(##)#####-####', filter: {'#': RegExp(r'[0-9]')});
 
+    // Definindo o estilo para o texto da label
+    TextStyle labelStyle =
+        themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+              color: themeProvider.themeData.colorScheme.onSurface,
+            ) ??
+            TextStyle(color: Colors.black);
+
+    // Definindo o estilo do asterisco (vermelho)
+    TextStyle asteriscoStyle =
+        labelStyle.copyWith(color: Colors.red); // Asterisco vermelho
+
+    // A label com o asterisco vermelho, se o campo for obrigatório e ainda não preenchido
+    String labelComAsterisco = widget.label;
+    if (widget.obrigatorio && widget.controller.text.isEmpty) {
+      labelComAsterisco = widget.label + ' *'; // Adiciona o asterisco
+    }
+
+    // Criação do decoration com a label que inclui o asterisco
     InputDecoration inputDecoration = InputDecoration(
-      labelText: widget.label,
-      labelStyle: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-        color: themeProvider.themeData.colorScheme.onSurface,
-      ),
+      labelText: labelComAsterisco,
+      labelStyle: labelStyle,
       hintStyle:
           themeProvider.themeData.inputDecorationTheme.hintStyle?.copyWith(
         color: themeProvider.themeData.colorScheme.onSurface.withOpacity(0.6),
@@ -57,28 +68,26 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       ),
     );
 
-    if (widget.label == 'Descrição') {
-      return TextField(
-        controller: widget.controller,
-        decoration: inputDecoration,
-        obscureText: widget.obscureText,
-        onChanged: widget.onChanged,
-        style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-          color: themeProvider.themeData.colorScheme.onSurface,
-        ),
-        maxLines: 5,
-      );
-    } else if (widget.label == 'Data de Nascimento' ||
+    // Mascaradores de entrada
+    var maskFormatterData = MaskTextInputFormatter(
+        mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
+    var maskFormatterCpf = MaskTextInputFormatter(
+        mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
+    var maskFormatterTelefone = MaskTextInputFormatter(
+        mask: '(##)#####-####', filter: {'#': RegExp(r'[0-9]')});
+
+    // De acordo com a label, retorna o TextField com a máscara e estilo apropriado
+    if (widget.label == 'Data de Nascimento' ||
         widget.label == 'Data da Ocorrência') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
         obscureText: widget.obscureText,
         onChanged: widget.onChanged,
+        inputFormatters: [maskFormatterData],
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
-        inputFormatters: [maskFormatterData],
       );
     } else if (widget.label == 'CPF') {
       return TextField(
@@ -86,28 +95,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         decoration: inputDecoration,
         obscureText: widget.obscureText,
         onChanged: widget.onChanged,
-        style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-          color: themeProvider.themeData.colorScheme.onSurface,
-        ),
         inputFormatters: [maskFormatterCpf],
-      );
-    } else if (widget.label == 'Nome Completo' || widget.label == 'E-mail') {
-      return TextField(
-        controller: widget.controller,
-        decoration: inputDecoration,
-        obscureText: widget.obscureText,
-        onChanged: widget.onChanged,
-        style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-          color: themeProvider.themeData.colorScheme.onSurface,
-        ),
-      );
-    } else if (widget.label == 'Senha') {
-      return TextField(
-        controller: widget.controller,
-        decoration: inputDecoration,
-        onChanged: widget.onChanged,
-        obscureText:
-            widget.label == 'Senha' || widget.label == 'Confirmar Senha',
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),

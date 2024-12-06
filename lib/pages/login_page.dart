@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_cadastrar_text_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_recuperar_button.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_textfield.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -75,17 +78,6 @@ class _LoginPageState extends State<LoginPage> {
     String enteredPassword = senhaController.text.trim();
     await _saveLoginData();
 
-    final dio = Dio();
-
-    // Recupera o token do SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('token');
-
-    // Configura o cabeçalho de autorização, se o token existir
-    if (token != null) {
-      dio.options.headers['Authorization'] = 'Bearer $token';
-    }
-
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/login';
 
     final Map<String, dynamic> data = {
@@ -93,15 +85,22 @@ class _LoginPageState extends State<LoginPage> {
       "senha": enteredPassword,
     };
 
+    debugPrint('Dados sendo enviados: $data');
+
     try {
-      final Response response = await dio.post(
-        url,
-        data: data,
-        options: Options(contentType: Headers.jsonContentType),
+      // Faz a requisição HTTP POST
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
       );
 
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final responseData = response.data;
+      debugPrint('Resposta do servidor: ${response.body}');
+      debugPrint('Status Code: ${response.statusCode}');
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
         if (responseData['tokenDTO'] != null &&
             responseData['tokenDTO']['token'] != null &&
             responseData['idUsuario'] != null) {
@@ -109,7 +108,8 @@ class _LoginPageState extends State<LoginPage> {
           final int idUsuario =
               int.tryParse(responseData['idUsuario'].toString()) ?? 0;
 
-          // Salva o token e id do usuário no SharedPreferences
+          // Salva o token e o ID do usuário no SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
           await prefs.setInt('idUsuario', idUsuario);
 
@@ -127,17 +127,15 @@ class _LoginPageState extends State<LoginPage> {
           });
         } else {
           Fluttertoast.showToast(msg: 'Erro ao processar os dados de login.');
-          debugPrint('Data being sent: $data');
         }
       } else {
         Fluttertoast.showToast(
-            msg: 'Erro ao fazer login. Status: ${response.statusCode}');
-        debugPrint('Data being sent: $data');
+          msg: 'Erro ao fazer login. Status: ${response.statusCode}',
+        );
       }
     } catch (e) {
       Fluttertoast.showToast(msg: 'Erro na requisição. Tente novamente.');
       debugPrint('Erro na requisição: $e');
-      debugPrint('Data being sent: $data');
     } finally {
       setState(() {
         _isLoading = false; // Finaliza o carregamento

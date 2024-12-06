@@ -175,133 +175,223 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Denúncia Anônima',
-                  style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
-                    color: themeProvider.themeData.colorScheme.onSurface,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Denúncia Anônima',
+                    style:
+                        themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+                      color: themeProvider.themeData.colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                Switch(
-                  value: isSwitched,
-                  onChanged: (value) {
-                    setState(() {
-                      isSwitched = value;
-                    });
-                  },
-                ),
-              ],
-            ),
-            if (!isSwitched) ...[
-              CustomTextfield(
-                  controller: _nomeController, label: 'Nome Completo'),
-              const SizedBox(height: 16),
-              CustomTextfield(controller: _emailController, label: 'E-mail'),
-              const SizedBox(height: 16),
-              CustomTextfield(controller: _cpfController, label: 'CPF'),
-              const SizedBox(height: 16),
-              CustomTextfield(
-                  controller: _dataNascimentoController,
-                  label: 'Data de Nascimento'),
-              const SizedBox(height: 16),
-              CustomTextfield(
-                  controller: _telefoneController, label: 'Telefone'),
-            ],
-            const SizedBox(height: 16),
-            DropdownButton<String>(
-              value: _categoriaSelecionada,
-              hint: const Text('Selecione o Tipo de Ocorrência'),
-              isExpanded: true,
-              items: _categorias.map((categoria) {
-                return DropdownMenuItem<String>(
-                  value: categoria['id'].toString(),
-                  child: Text(categoria['nome_categoria']),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  _categoriaSelecionada = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            CustomTextfield(
-                controller: _dataController, label: 'Data da Ocorrência'),
-            const SizedBox(height: 16),
-            CustomTextfield(
-                controller: _descricaoController, label: 'Descrição'),
-            const SizedBox(height: 16),
-            Consumer<PosicaoController>(
-              builder: (context, posicaoController, child) {
-                return Text(
-                  'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
-                  style: themeProvider.themeData.textTheme.bodyLarge,
-                );
-              },
-            ),
-            if (posicaoController.erro.isNotEmpty)
-              Text(
-                'Erro: ${posicaoController.erro}',
-                style: TextStyle(color: Colors.red),
+                  Switch(
+                    value: isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        isSwitched = value;
+                      });
+                    },
+                  ),
+                ],
               ),
-            SizedBox(height: 16),
-            _imagens.isEmpty
-                ? Text('Nenhuma imagem selecionada.')
-                : Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _imagens.map((imagem) {
-                      return Image.file(
-                        File(imagem.path),
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      );
-                    }).toList(),
-                  ),
-            const SizedBox(height: 16),
-            MyButton(
-              text: 'Capturar Localização',
-              onTap: () async {
-                final LatLng? novaPosicao = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => SelLocalizacaoMaps(
-                            latitudeInicial: posicaoController.latitude,
-                            longitudeInicial: posicaoController.longitude,
-                          )),
-                );
-                if (novaPosicao != null) {
+              if (!isSwitched) ...[
+                CustomTextfield(
+                    controller: _nomeController, label: 'Nome Completo'),
+                CustomTextfield(controller: _emailController, label: 'E-mail'),
+                CustomTextfield(controller: _cpfController, label: 'CPF'),
+                CustomTextfield(
+                    controller: _dataNascimentoController,
+                    label: 'Data de Nascimento'),
+                CustomTextfield(
+                    controller: _telefoneController, label: 'Telefone'),
+              ],
+              const SizedBox(height: 16),
+              DropdownButton<String>(
+                value: _categoriaSelecionada,
+                hint: const Text('Selecione o Tipo de Ocorrência'),
+                isExpanded: true,
+                items: _categorias.map((categoria) {
+                  return DropdownMenuItem<String>(
+                    value: categoria['id'].toString(),
+                    child: Text(categoria['nome_categoria']),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
                   setState(() {
-                    posicaoController.latitude = novaPosicao.latitude;
-                    posicaoController.longitude = novaPosicao.longitude;
+                    _categoriaSelecionada = newValue;
                   });
-                }
-              },
-              width: 150,
-              height: 40,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-            ),
-            SizedBox(height: 16),
-            MyButton(
-              text: 'Selecionar Imagens',
-              onTap: _pegarImagem,
-              width: 150,
-              height: 40,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-            ),
-            const SizedBox(height: 16),
-            MyButton(
-              text: 'Salvar Ocorrência',
-              onTap: _enviarOcorrencia,
-              width: 150,
-              height: 40,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-            ),
-          ],
+                },
+              ),
+              const SizedBox(height: 16),
+              CustomTextfield(
+                  controller: _dataController, label: 'Data da Ocorrência'),
+              CustomTextfield(
+                  controller: _descricaoController, label: 'Descrição'),
+              const SizedBox(height: 16),
+              Consumer<PosicaoController>(
+                builder: (context, posicaoController, child) {
+                  return Text(
+                    'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
+                    style: themeProvider.themeData.textTheme.bodyLarge,
+                  );
+                },
+              ),
+              if (posicaoController.erro.isNotEmpty)
+                Text(
+                  'Erro: ${posicaoController.erro}',
+                  style: TextStyle(color: Colors.red),
+                ),
+              SizedBox(height: 16),
+              _imagens.isEmpty
+                  ? Text('Nenhuma imagem selecionada.')
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: _imagens.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemBuilder: (context, index) {
+                        return Image.file(
+                          File(_imagens[index].path),
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+              const SizedBox(height: 16),
+              Container(
+                width: 250,
+                height: 80,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF38B887),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 10,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shadowColor: Colors.black.withOpacity(0.4),
+                  ),
+                  onPressed: () async {
+                    final LatLng? novaPosicao =
+                        await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => SelLocalizacaoMaps(
+                          latitudeInicial: posicaoController.latitude,
+                          longitudeInicial: posicaoController.longitude,
+                        ),
+                      ),
+                    );
+                    if (novaPosicao != null) {
+                      setState(() {
+                        posicaoController.latitude = novaPosicao.latitude;
+                        posicaoController.longitude = novaPosicao.longitude;
+                      });
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Capturar Localização',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: 250,
+                height: 80,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF38B887),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 10,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shadowColor: Colors.black.withOpacity(0.4),
+                  ),
+                  onPressed: _pegarImagem,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.image,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Selecionar Imagens',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: 250,
+                height: 80,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF38B887),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 10,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shadowColor: Colors.black.withOpacity(0.4),
+                  ),
+                  onPressed: _enviarOcorrencia,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.save,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Salvar Ocorrência',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

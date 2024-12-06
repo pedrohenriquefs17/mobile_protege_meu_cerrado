@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
+import 'package:http/http.dart' as http;
 
 class ConfirmacaoPage extends StatelessWidget {
   final String nome;
@@ -8,6 +11,7 @@ class ConfirmacaoPage extends StatelessWidget {
   final String dataNascimento;
   final String telefone;
   final String email;
+  final String senha;
 
   const ConfirmacaoPage({
     super.key,
@@ -16,7 +20,54 @@ class ConfirmacaoPage extends StatelessWidget {
     required this.dataNascimento,
     required this.telefone,
     required this.email,
+    required this.senha,
   });
+
+  Future<void> cadastrar(BuildContext context) async {
+    final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
+
+    final Map<String, dynamic> data = {
+      "email": email,
+      "senha": senha,
+      "nome": nome,
+      "cpf": cpf,
+      "dataNascimento": dataNascimento,
+      "telefone": telefone,
+      "role": "USUARIO",
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        Fluttertoast.showToast(
+          msg: "Cadastro realizado com sucesso!",
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacementNamed(context, '/login');
+        });
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Erro ao cadastrar: ${response.body}',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Erro: $e",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,15 +132,7 @@ class ConfirmacaoPage extends StatelessWidget {
                         Expanded(
                           child: MyButton(
                             text: "Confirmar",
-                            onTap: () {
-                              Fluttertoast.showToast(
-                                msg:
-                                    "Dados confirmados! Realizando cadastro...",
-                                backgroundColor: Colors.green,
-                                textColor: Colors.white,
-                              );
-                              Navigator.pushReplacementNamed(context, '/login');
-                            },
+                            onTap: () => cadastrar(context),
                           ),
                         ),
                       ],

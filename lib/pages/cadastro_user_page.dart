@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +7,7 @@ import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/pages/confirmacao_cadastro_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class CadastroUserPage extends StatefulWidget {
   const CadastroUserPage({super.key});
@@ -25,6 +26,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
   final TextEditingController confirmacaoSenhaController =
       TextEditingController();
   final TextEditingController telefoneController = TextEditingController();
+
   String? mensagemErro;
 
   void validarSenha() {
@@ -33,36 +35,49 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
         mensagemErro = 'Senhas não conferem!';
       } else {
         mensagemErro = null;
-        print('Senhas válidas');
       }
     });
   }
 
-  Future<void> login() async {
-    Navigator.pushReplacementNamed(context, '/login');
+  bool validarCampos() {
+    // Verifica se todos os campos são válidos
+    return nomeController.text.trim().isNotEmpty &&
+        cpfController.text.trim().isNotEmpty &&
+        dataNascimentoController.text.trim().isNotEmpty &&
+        telefoneController.text.trim().isNotEmpty &&
+        emailController.text.trim().isNotEmpty &&
+        senhaController.text.trim().isNotEmpty &&
+        confirmacaoSenhaController.text.trim().isNotEmpty &&
+        mensagemErro == null;
   }
 
   Future<void> irParaConfirmcao() async {
-    if (mensagemErro != null) {
-      Fluttertoast.showToast(
-        msg: "Corrija os erros antes de prosseguir!",
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    // Valida os campos antes de prosseguir
+    if (!validarCampos()) {
+      setState(() {
+        mensagemErro = "Preencha todos os campos obrigatórios!";
+      });
       return;
     }
 
+    // Redireciona para a página de confirmação
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ConfirmacaoPage(
-            nome: nomeController.text.trim(),
-            cpf: cpfController.text.trim(),
-            dataNascimento: dataNascimentoController.text.trim(),
-            telefone: telefoneController.text.trim(),
-            email: emailController.text.trim(),
-          ),
-        ));
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConfirmacaoPage(
+          nome: nomeController.text.trim(),
+          cpf: cpfController.text.trim(),
+          dataNascimento: dataNascimentoController.text.trim(),
+          telefone: telefoneController.text.trim(),
+          email: emailController.text.trim(),
+          senha: senhaController.text.trim(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> login() async {
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   Future<void> cadastrar() async {
@@ -74,7 +89,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
       );
       return;
     }
-    final dio = Dio();
+
     final String url = 'https://pmc.airsoftcontrol.com.br/pmc/usuario/cadastro';
 
     final DateFormat dataPadrao = DateFormat('dd/MM/yyyy');
@@ -93,10 +108,16 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
       "role": "USUARIO"
     };
 
+    debugPrint('Dados enviados: $data');
+
     try {
-      final Response response = await dio.post(url, data: data);
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        debugPrint('Cadastrado com sucesso: ${response.data}');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint('Cadastrado com sucesso: ${response.body}');
         Fluttertoast.showToast(
           msg: "Cadastro realizado com sucesso!",
           toastLength: Toast.LENGTH_SHORT,
@@ -111,8 +132,9 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
           Navigator.pushReplacementNamed(context, '/login');
         });
       } else {
-        debugPrint('Erro ao cadastrar: ${response.data}');
-        Fluttertoast.showToast(msg: 'Erro ao cadastrar.');
+        debugPrint(
+            'Erro ao cadastrar: ${response.statusCode} - ${response.body}');
+        Fluttertoast.showToast(msg: 'Erro ao cadastrar: ${response.body}');
       }
     } catch (e) {
       debugPrint('Erro ao fazer requisição: $e');
@@ -121,7 +143,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       body: Stack(
@@ -172,31 +194,37 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
                         CustomTextfield(
                           controller: nomeController,
                           label: 'Nome Completo',
+                          obrigatorio: true,
                         ),
                         const SizedBox(height: 10),
                         CustomTextfield(
                           controller: cpfController,
                           label: 'CPF',
+                          obrigatorio: true,
                         ),
                         const SizedBox(height: 10),
                         CustomTextfield(
                           controller: dataNascimentoController,
                           label: 'Data de Nascimento',
+                          obrigatorio: true,
                         ),
                         const SizedBox(height: 10),
                         CustomTextfield(
                           controller: telefoneController,
                           label: 'Telefone',
+                          obrigatorio: true,
                         ),
                         const SizedBox(height: 10),
                         CustomTextfield(
                           controller: emailController,
                           label: 'E-mail',
+                          obrigatorio: true,
                         ),
                         const SizedBox(height: 10),
                         CustomTextfield(
                           controller: senhaController,
                           label: 'Senha',
+                          obrigatorio: true,
                           obscureText: true,
                           onChanged: (text) => validarSenha(),
                         ),
@@ -204,6 +232,7 @@ class _CadastroUserPageState extends State<CadastroUserPage> {
                         CustomTextfield(
                           controller: confirmacaoSenhaController,
                           label: 'Confirmar Senha',
+                          obrigatorio: true,
                           obscureText: true,
                           onChanged: (text) => validarSenha(),
                         ),
