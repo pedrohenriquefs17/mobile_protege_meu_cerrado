@@ -1,6 +1,4 @@
-import 'dart:ffi';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,7 +28,6 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
-  final teste = 0;
   final List<XFile> _imagens = [];
   bool isSwitched = false;
   bool isLogado = false;
@@ -62,13 +59,11 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
       setState(() {
         _categorias = List<Map<String, dynamic>>.from(response.data);
-        print("id_categoria: $_categoriaSelecionada");
+        debugPrint("id_categoria: $_categoriaSelecionada");
       });
     } catch (e) {
-      print("Erro ao carregar categorias: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erro ao carregar categorias")),
-      );
+      debugPrint("Erro ao carregar categorias: $e");
+      Fluttertoast.showToast(msg: 'Erro ao carregar categorias.');
     }
   }
 
@@ -83,12 +78,15 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   Future<void> _formatarData() async {
     final DateFormat dataPadrao = DateFormat('dd/MM/yyyy');
     final DateFormat dataFormatar = DateFormat('yyyy-MM-dd');
+
     //data nascimento
-    final DateTime dataMudarNascimento =
-        dataPadrao.parse(_dataNascimentoController.text.trim());
-    final String dataFormatadaNascimento =
-        dataFormatar.format(dataMudarNascimento);
-    _dataNascimentoController.text = dataFormatadaNascimento;
+    if (!isLogado) {
+      final DateTime dataMudarNascimento =
+          dataPadrao.parse(_dataNascimentoController.text.trim());
+      final String dataFormatadaNascimento =
+          dataFormatar.format(dataMudarNascimento);
+      _dataNascimentoController.text = dataFormatadaNascimento;
+    }
     //data ocorrencia
     final DateTime dataMudarOcorrencia =
         dataPadrao.parse(_dataController.text.trim());
@@ -213,26 +211,26 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
                 ],
               ),
               if (!isLogado) ...[
-                  CustomTextfield(
-                    controller: _nomeController,
-                    label: 'Nome',
-                  ),
-                  CustomTextfield(
-                    controller: _emailController,
-                    label: 'E-mail',
-                  ),
-                  CustomTextfield(
-                    controller: _cpfController,
-                    label: 'CPF',
-                  ),
-                  CustomTextfield(
-                    controller: _telefoneController,
-                    label: 'Telefone',
-                  ),
-                  CustomTextfield(
-                    controller: _dataNascimentoController,
-                    label: 'Data de Nascimento',
-                  ),
+                CustomTextfield(
+                  controller: _nomeController,
+                  label: 'Nome',
+                ),
+                CustomTextfield(
+                  controller: _emailController,
+                  label: 'E-mail',
+                ),
+                CustomTextfield(
+                  controller: _cpfController,
+                  label: 'CPF',
+                ),
+                CustomTextfield(
+                  controller: _telefoneController,
+                  label: 'Telefone',
+                ),
+                CustomTextfield(
+                  controller: _dataNascimentoController,
+                  label: 'Data de Nascimento',
+                ),
               ],
               const SizedBox(height: 16),
               DropdownButton<String>(

@@ -38,8 +38,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
             TextStyle(color: Colors.black);
 
     // Definindo o estilo do asterisco (vermelho)
-    TextStyle asteriscoStyle =
-        labelStyle.copyWith(color: Colors.red); // Asterisco vermelho
+    labelStyle.copyWith(color: Colors.red); // Asterisco vermelho
 
     // A label com o asterisco vermelho, se o campo for obrigatório e ainda não preenchido
     String labelComAsterisco = widget.label;
@@ -110,6 +109,17 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
+      );
+    } else if (widget.label == 'Descrição') {
+      return TextField(
+        controller: widget.controller,
+        decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
+        style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+          color: themeProvider.themeData.colorScheme.onSurface,
+        ),
+        maxLines: 5,
       );
     } else {
       return TextField(
