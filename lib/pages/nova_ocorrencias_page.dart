@@ -100,12 +100,13 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     final posicaoController =
         Provider.of<PosicaoController>(context, listen: false);
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    int idUsuario = prefs.getInt('idUsuario') ?? 0;
     final dio = Dio();
 
     final String url = 'https://pmc.airsoftcontrol.com.br/ocorrencias';
 
     final Map<String, dynamic> data = {
-      "id_user": prefs.getInt('idUsuario'),
+      "id_user": idUsuario == 0 ? null : idUsuario,
       "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
       "nome": isSwitched ? null : _nomeController.text.trim(),
       "email": isSwitched ? null : _emailController.text.trim(),

@@ -19,12 +19,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   // Inicializando o PageController
   final PageController _pageController = PageController();
 
-  Future<void> _completeOnboarding(BuildContext context) async {
+  Future<void> _entrarSemLogar(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboarding_completed', true);
+    await prefs.setString('token', '');
+    await prefs.setInt('idUsuario', 0);
 
-    // Navega para a tela principal
-    Navigator.pushReplacementNamed(context, '/home');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacementNamed(context, '/home');
+    });
   }
 
   List images = [
@@ -185,21 +187,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ),
                   ),
                 ),
-
               Positioned(
                 bottom: 150,
                 left: 0,
                 right: 0,
                 child: index == images.length - 1
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          ResponsiveButtonLogin(width: 140),
-                          ResponsiveButtonCadastro(width: 140),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ResponsiveButtonLogin(width: 140),
+                              ResponsiveButtonCadastro(width: 140),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                _entrarSemLogar(context);
+                              },
+                              child: Text('Entrar sem logar'),
+                            ), // Novo botão
+                          ),
                         ],
                       )
                     : SizedBox.shrink(),
-              ),
+              )
             ],
           );
         },
