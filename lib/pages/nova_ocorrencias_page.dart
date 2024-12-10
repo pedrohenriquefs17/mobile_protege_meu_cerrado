@@ -16,6 +16,7 @@ class NovaOcorrenciaPage extends StatefulWidget {
   const NovaOcorrenciaPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _NovaOcorrenciaPageState createState() => _NovaOcorrenciaPageState();
 }
 

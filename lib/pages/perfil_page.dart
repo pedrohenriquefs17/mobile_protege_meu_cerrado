@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -59,16 +60,19 @@ class _PerfilPageState extends State<PerfilPage> {
     if (_imageToSave != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('profileImage', _imageToSave!.path);
-      print('Imagem salva: ${_imageToSave!.path}'); // Debugging
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Imagem de perfil salva com sucesso!')),
+      debugPrint('Imagem salva: ${_imageToSave!.path}'); // Debugging
+      Fluttertoast.showToast(
+        msg: 'Imagem salva com sucesso!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
