@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_protege_meu_cerrado/model/ocorrencias_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MinhasOcorrenciasPage extends StatefulWidget {
   const MinhasOcorrenciasPage({super.key});
@@ -8,6 +11,17 @@ class MinhasOcorrenciasPage extends StatefulWidget {
 }
 
 class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
+  List<OcorrenciasModel> ocorrencias = [];
+
+  Future<void> _getOcorrencias() async {
+    final dio = Dio();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final idUsuario = prefs.getInt('idUsuario');
+    final String url =
+        'https://pmc.airsoftcontrol.com.br/ocorrencias/categorias/$idUsuario';
+    final Response response = await dio.get(url);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

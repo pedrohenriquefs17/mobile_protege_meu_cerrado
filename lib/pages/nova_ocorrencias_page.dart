@@ -107,16 +107,16 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     final String url = 'https://pmc.airsoftcontrol.com.br/ocorrencias';
 
     final Map<String, dynamic> data = {
-      "id_user": idUsuario == 0 ? null : idUsuario,
-      "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
+      "idUser": idUsuario == 0 ? null : idUsuario,
+      "idCategoria": int.tryParse(_categoriaSelecionada ?? ''),
       "nome": isSwitched ? null : _nomeController.text.trim(),
       "email": isSwitched ? null : _emailController.text.trim(),
       "cpf": isSwitched ? null : _cpfController.text.trim(),
       "telefone": isSwitched ? null : _telefoneController.text.trim(),
-      "dt_nasc": isSwitched ? null : _dataNascimentoController.text.trim(),
+      "dtNasc": isSwitched ? null : _dataNascimentoController.text.trim(),
       "descricao": _descricaoController.text.trim(),
-      "is_anon": isSwitched,
-      "dt_ocorrencia": _dataController.text.trim(),
+      "isAnon": isSwitched,
+      "dtOcorrencia": _dataController.text.trim(),
       "lat": posicaoController.latitude.toString(),
       "lon": posicaoController.longitude.toString(),
     };
