@@ -258,9 +258,17 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
               const SizedBox(height: 16),
               Consumer<PosicaoController>(
                 builder: (context, posicaoController, child) {
-                  return Text(
-                    'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
-                    style: themeProvider.themeData.textTheme.bodyLarge,
+                  return Column(
+                    children: [
+                      Text(
+                        'Latitude: ${posicaoController.latitude}',
+                        style: themeProvider.themeData.textTheme.bodyLarge,
+                      ),
+                      Text(
+                        'Longitude: ${posicaoController.longitude}',
+                        style: themeProvider.themeData.textTheme.bodyLarge,
+                      ),
+                    ],
                   );
                 },
               ),

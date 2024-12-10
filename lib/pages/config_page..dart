@@ -57,12 +57,10 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OnboardingPage(),
-                        ),
-                      ),
+                      onPressed: () =>
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.pushReplacementNamed(context, '/onboarding');
+                      }),
                       icon: const Icon(Icons.logout),
                       label: const Text(
                         'Sair da Conta',

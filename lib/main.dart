@@ -69,6 +69,7 @@ class MainApp extends StatelessWidget {
                   '/home': (context) => const HomeScreen(),
                   '/login': (context) => const LoginPage(),
                   '/cadastroUsuario': (context) => const CadastroUserPage(),
+                  '/onboarding': (context) => const OnboardingPage(),
                 },
               );
             },
