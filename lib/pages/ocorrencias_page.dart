@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_protege_meu_cerrado/pages/minhas_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OcorrenciasPage extends StatefulWidget {
   const OcorrenciasPage({super.key});
@@ -13,6 +15,28 @@ class OcorrenciasPage extends StatefulWidget {
 }
 
 class _OcorrenciasPageState extends State<OcorrenciasPage> {
+  bool isLogado = false;
+
+  @override
+  initState() {
+    super.initState();
+    _estaLogado();
+  }
+
+  Future<void> _estaLogado() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? idUsuario = prefs.getInt('idUsuario');
+    if (idUsuario != null && idUsuario > 0) {
+      setState(() {
+        isLogado = true;
+      });
+    } else {
+      setState(() {
+        isLogado = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -58,12 +82,24 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                 Flexible(
                   child: FloatingActionButton.extended(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MinhasOcorrenciasPage(),
-                        ),
-                      );
+                      if (isLogado) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MinhasOcorrenciasPage(),
+                          ),
+                        );
+                      } else {
+                        Fluttertoast.showToast(
+                            msg:
+                                "Você precisa estar logado para acessar suas ocorrências.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      }
                     },
                     label: const Text('Minhas Ocorrências'),
                     icon: const Icon(Icons.list),
