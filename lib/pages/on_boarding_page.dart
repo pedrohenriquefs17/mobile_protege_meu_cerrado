@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/app_text.dart';
 import 'package:mobile_protege_meu_cerrado/components/responsive_button_cadastro.dart';
 import 'package:mobile_protege_meu_cerrado/components/responsive_button_login.dart';
+import 'package:mobile_protege_meu_cerrado/pages/login_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,6 +77,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             },
           ),
           _buildIndicators(screenHeight),
+          _buildSkipButton(),
         ],
       ),
     );
@@ -83,7 +85,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _buildBackground(String imagePath) {
     return Positioned(
-      top: 50, // A imagem ficará 50 pixels abaixo do topo
+      top: 50,
       left: 0,
       right: 0,
       child: SvgPicture.asset(
@@ -215,6 +217,39 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSkipButton() {
+    return Positioned(
+      top: 40,
+      right: 20,
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return LoginPage();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                var fadeAnimation =
+                    Tween(begin: 0.0, end: 1.0).animate(animation);
+                return FadeTransition(opacity: fadeAnimation, child: child);
+              },
+            ),
+          );
+        },
+        child: const Text(
+          "Pular",
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
