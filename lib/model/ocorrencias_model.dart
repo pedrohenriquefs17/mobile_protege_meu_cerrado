@@ -12,6 +12,17 @@ class OcorrenciasModel {
       required this.latitude,
       required this.longitude});
 
+  factory OcorrenciasModel.fromJson(Map<String, dynamic> json) {
+    return OcorrenciasModel(
+      descricao:
+          json['descricao'] ?? '', // Adicione um valor padrão se necessário
+      categoria: json['idCategoria'] ?? 0,
+      data: json['dtOcorrencia'] ?? '',
+      latitude: json['lat'] ?? '',
+      longitude: json['lon'] ?? '',
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'decricao': descricao,

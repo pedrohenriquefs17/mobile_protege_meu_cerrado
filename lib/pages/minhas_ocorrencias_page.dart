@@ -13,13 +13,29 @@ class MinhasOcorrenciasPage extends StatefulWidget {
 class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
   List<OcorrenciasModel> ocorrencias = [];
 
-  Future<void> _getOcorrencias() async {
+  @override
+  void initState() {
+    super.initState();
+    getOcorrencias();
+  }
+
+  Future<void> getOcorrencias() async {
     final dio = Dio();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'https://pmc.airsoftcontrol.com.br/ocorrencias/categorias/$idUsuario';
-    final Response response = await dio.get(url);
+        'https://pmc.airsoftcontrol.com.br/ocorrencias/usuario/$idUsuario';
+
+    try {
+      final Response response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        ocorrencias = data.map((e) => OcorrenciasModel.fromJson(e)).toList();
+      }
+    } catch (e) {
+      debugPrint('Erro ao buscar ocorrências: $e');
+    }
   }
 
   @override
@@ -55,23 +71,48 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                 ),
                 SizedBox(height: 16),
                 Expanded(
-                    child: ListView.builder(
-                  itemCount: 20,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ListTile(
-                        title: Text("Ocorrência ${index + 1}"),
-                        subtitle: Text("Descrição da ocorrência ${index + 1}"),
-                        trailing: Icon(Icons.arrow_forward_ios),
-                      ),
-                    );
-                  },
-                ))
+                  child: ocorrencias.isEmpty
+                      ? const Center(child: Text('Nenhum cliente encontrado.'))
+                      : ListView.builder(
+                          itemCount: ocorrencias.length,
+                          itemBuilder: (context, index) {
+                            final ocorrencia = ocorrencias[index];
+                            return GestureDetector(
+                              onTap: () {},
+                              child: Card(
+                                elevation: 4,
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    ocorrencia.categoria.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Descrição: ${ocorrencia.descricao}',
+                                          style: const TextStyle(fontSize: 14)),
+                                      Text('Data: ${ocorrencia.data}',
+                                          style: const TextStyle(fontSize: 14)),
+                                      Text('Coordenadas de Localização: ${ocorrencia.latitude} - ${ocorrencia.longitude}',
+                                          style: const TextStyle(fontSize: 14)),
+                                    ],
+                                  ),
+                                  trailing: const Icon(Icons.arrow_forward_ios),
+                                  contentPadding: const EdgeInsets.all(16),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
               ],
             ),
           )
