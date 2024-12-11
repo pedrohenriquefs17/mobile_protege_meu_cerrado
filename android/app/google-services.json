@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "225002295496",
+    "project_id": "protegemeucerrado-48152",
+    "storage_bucket": "protegemeucerrado-48152.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225002295496:android:bab71f269f929254df15fd",
+        "android_client_info": {
+          "package_name": "com.example.mobile_protege_meu_cerrado"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAEUGxKdD-oykC62kYE2W4u5dztTUy0L0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

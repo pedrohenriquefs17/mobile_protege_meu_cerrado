@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_protege_meu_cerrado/firebase/firebase.dart';
 import 'package:mobile_protege_meu_cerrado/pages/cadastro_user_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/login_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/on_boarding_page.dart';
@@ -12,6 +14,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final themeProvider = ThemeProvider();
   await themeProvider.carregarTema();
+
+  await Firebase.initializeApp();
+  await FireBase().initFirebaseMessaging();
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
