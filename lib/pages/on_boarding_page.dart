@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/app_text.dart';
 import 'package:mobile_protege_meu_cerrado/components/responsive_button_cadastro.dart';
 import 'package:mobile_protege_meu_cerrado/components/responsive_button_login.dart';
-import 'package:mobile_protege_meu_cerrado/pages/login_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,7 +76,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             },
           ),
           _buildIndicators(screenHeight),
-          _buildSkipButton(),
+          _buildSkipButton(screenHeight),
         ],
       ),
     );
@@ -221,26 +220,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  Widget _buildSkipButton() {
+  Widget _buildSkipButton(double screenHeight) {
     return Positioned(
       top: 40,
       right: 20,
       child: TextButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return LoginPage();
-              },
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                var fadeAnimation =
-                    Tween(begin: 0.0, end: 1.0).animate(animation);
-                return FadeTransition(opacity: fadeAnimation, child: child);
-              },
-            ),
-          );
+         _pageController.jumpToPage(images.length - 1);
         },
         child: const Text(
           "Pular",
