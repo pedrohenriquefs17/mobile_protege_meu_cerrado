@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
@@ -94,38 +94,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true, // Garante que o título esteja centralizado
       ),
-      body: Stack(
-        children: [
-          // Conteúdo principal da página
-          _pages[_currentIndex],
-          // flutuante
-          Positioned(
-            bottom: 18,
-            left: 24,
-            right: 24,
-            child: Container(
-              height: 64,
-              decoration: BoxDecoration(
-                color: const Color(0xFF5B7275).withOpacity(0.8),
-                borderRadius: const BorderRadius.all(Radius.circular(24)),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF5B7275).withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: CustomBottomNavBar(
-                  currentIndex: _currentIndex,
-                  onTap: _onNavTap,
-                ),
-              ),
-            ),
-          ),
+      body: _pages[_currentIndex],
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.transparent,
+        color: Color(0xFF5B7275),
+        buttonBackgroundColor: Theme.of(context).colorScheme.primary,
+        height: 60,
+        items: const [
+          Icon(Icons.home, size: 30, color: Colors.white),
+          Icon(Icons.report, size: 30, color: Colors.white),
+          Icon(Icons.person, size: 30, color: Colors.white),
+          Icon(Icons.settings, size: 30, color: Colors.white),
         ],
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        animationDuration: const Duration(milliseconds: 300),
+        animationCurve: Curves.easeInOut,
       ),
     );
   }
