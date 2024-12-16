@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_protege_meu_cerrado/pages/minhas_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
@@ -36,7 +35,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
   Future<void> _fetchOcorrencias() async {
     try {
       final response = await http.get(
-        Uri.parse('http://meu_ip:8080/ocorrencias'), //colocar seu ip
+        Uri.parse('http://192.168.0.206:8080/ocorrencias'), //colocar seu ip
       );
       if (response.statusCode == 200) {
         setState(() {

@@ -29,7 +29,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'http://meu_ip:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
+        'http://192.168.0.206:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
 
     try {
       // Fazendo a requisição HTTP usando o pacote 'http'
@@ -53,7 +53,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     String pesquisar = _pesquisarController.text.toLowerCase();
     setState(() {
       ocorrenciasFiltradas = ocorrencias.where((ocorrencia) {
-        final descricao = ocorrencia.descricao?.toLowerCase() ?? '';
+        final descricao = ocorrencia.descricao.toLowerCase();
         return descricao.contains(pesquisar);
       }).toList();
     });
@@ -126,7 +126,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                                     children: [
                                       Text('Descrição: ${ocorrencia.descricao}',
                                           style: const TextStyle(fontSize: 14)),
-                                      Text('Data: ${ocorrencia.data}',
+                                      Text('Data: ${ocorrencia.dataOcorrencia}',
                                           style: const TextStyle(fontSize: 14)),
                                       Text(
                                           'Coordenadas de Localização: ${ocorrencia.latitude} - ${ocorrencia.longitude}',

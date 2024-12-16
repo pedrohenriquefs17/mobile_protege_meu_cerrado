@@ -11,13 +11,12 @@ import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:typed_data';
-import 'package:image/image.dart' as img;
 
 class NovaOcorrenciaPage extends StatefulWidget {
   const NovaOcorrenciaPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _NovaOcorrenciaPageState createState() => _NovaOcorrenciaPageState();
 }
 
@@ -50,7 +49,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   Future<void> _fetchCategorias() async {
     try {
       Response response = await _dio.get(
-        "http://meu_ip:8080/ocorrencias/categorias", //colocar seu ip
+        "http://192.168.0.206:8080/ocorrencias/categorias", //colocar seu ip
         options: Options(
           headers: {
             "Accept": "*/*",
@@ -73,9 +72,9 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     final ImagePicker picker = ImagePicker();
 
     // Selecionando múltiplas imagens
-    final List<XFile>? imagens = await picker.pickMultiImage();
+    final List<XFile> imagens = await picker.pickMultiImage();
 
-    if (imagens != null && imagens.isNotEmpty) {
+    if (imagens.isNotEmpty) {
       setState(() {
         _imagens.addAll(imagens);
       });
@@ -103,13 +102,14 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   }
 
   Future<void> _enviarOcorrencia() async {
-    _formatarData();
+    await _formatarData();
     final posicaoController =
+        // ignore: use_build_context_synchronously
         Provider.of<PosicaoController>(context, listen: false);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final dio = Dio();
 
-    final String url = 'http://meu_ip:8080/ocorrencias'; //colocar seu ip
+    final String url = 'http://192.168.0.206:8080/ocorrencias'; //colocar seu ip
 
     final Map<String, dynamic> data = {
       "idUser": prefs.getInt('idUsuario'),

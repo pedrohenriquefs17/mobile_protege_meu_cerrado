@@ -1,14 +1,14 @@
 class OcorrenciasModel {
   final String descricao;
   final int categoria;
-  final String data;
+  final String dataOcorrencia;
   final String latitude;
   final String longitude;
 
   OcorrenciasModel(
       {required this.descricao,
       required this.categoria,
-      required this.data,
+      required this.dataOcorrencia,
       required this.latitude,
       required this.longitude});
 
@@ -17,7 +17,7 @@ class OcorrenciasModel {
       descricao:
           json['descricao'] ?? '', // Adicione um valor padrão se necessário
       categoria: json['idCategoria'] ?? 0,
-      data: json['dtOcorrencia'] ?? '',
+      dataOcorrencia: json['dtOcorrencia'] ?? '',
       latitude: json['lat'] ?? '',
       longitude: json['lon'] ?? '',
     );
@@ -25,9 +25,9 @@ class OcorrenciasModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'decricao': descricao,
+      'descricao': descricao,
       'idCategoria': categoria,
-      'dtOcorrencia': data,
+      'dtOcorrencia': dataOcorrencia,
       'lat': latitude,
       'lon': longitude,
     };
