@@ -36,7 +36,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
   Future<void> _fetchOcorrencias() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8080/ocorrencias'),
+        Uri.parse('http://meu_ip:8080/ocorrencias'), //colocar seu ip
       );
       if (response.statusCode == 200) {
         setState(() {

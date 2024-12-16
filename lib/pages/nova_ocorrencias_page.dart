@@ -50,7 +50,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   Future<void> _fetchCategorias() async {
     try {
       Response response = await _dio.get(
-        "http://localhost:8080/ocorrencias/categorias",
+        "http://meu_ip:8080/ocorrencias/categorias", //colocar seu ip
         options: Options(
           headers: {
             "Accept": "*/*",
@@ -71,27 +71,14 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
   Future<void> _pegarImagem() async {
     final ImagePicker picker = ImagePicker();
+
     // Selecionando múltiplas imagens
-    final List<XFile> imagens = await picker.pickMultiImage();
+    final List<XFile>? imagens = await picker.pickMultiImage();
 
-    if (imagens.isNotEmpty) {
-      // Iterando pelas imagens selecionadas
-      for (var imagem in imagens) {
-        // Carregar a imagem selecionada
-        final bytes = await imagem.readAsBytes();
-        img.Image? image = img.decodeImage(Uint8List.fromList(bytes));
-
-        if (image != null) {
-          // Converter para PNG
-          final pngBytes = img.encodePng(image);
-
-          // Adicionar a imagem convertida à lista
-          setState(() {
-            // Aqui você adiciona a imagem convertida em formato PNG
-            _imagens.add(XFile.fromData(pngBytes, name: 'image.png'));
-          });
-        }
-      }
+    if (imagens != null && imagens.isNotEmpty) {
+      setState(() {
+        _imagens.addAll(imagens);
+      });
     }
   }
 
@@ -122,7 +109,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final dio = Dio();
 
-    final String url = 'http://localhost:8080/ocorrencias';
+    final String url = 'http://meu_ip:8080/ocorrencias'; //colocar seu ip
 
     final Map<String, dynamic> data = {
       "idUser": prefs.getInt('idUsuario'),
@@ -138,14 +125,16 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       "lat": posicaoController.latitude.toString(),
       "lon": posicaoController.longitude.toString(),
     };
+    debugPrint('Dados enviados: $data');
 
     final formData = FormData.fromMap(data);
 
+    // Adicionando imagens
     if (_imagens.isNotEmpty) {
       for (var imagem in _imagens) {
         formData.files.add(MapEntry(
           'imagem',
-          await MultipartFile.fromFile(imagem.path, filename: 'image.png'),
+          await MultipartFile.fromFile(imagem.path, filename: imagem.name),
         ));
       }
     }
@@ -164,9 +153,11 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
           Navigator.of(context).pop();
         });
       } else {
+        debugPrint('Erro ao enviar ocorrência: ${response.data}');
         Fluttertoast.showToast(msg: 'Erro ao enviar ocorrência.');
       }
     } catch (e) {
+      debugPrint('Erro na requisição: $e');
       Fluttertoast.showToast(msg: 'Erro na requisição.');
     }
   }

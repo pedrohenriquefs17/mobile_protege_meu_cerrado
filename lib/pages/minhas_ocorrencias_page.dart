@@ -29,7 +29,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'https://pmc.airsoftcontrol.com.br/ocorrencias/usuario/$idUsuario';
+        'http://meu_ip:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
 
     try {
       // Fazendo a requisição HTTP usando o pacote 'http'
