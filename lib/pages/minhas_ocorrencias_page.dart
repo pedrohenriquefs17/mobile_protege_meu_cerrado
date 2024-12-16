@@ -1,7 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:mobile_protege_meu_cerrado/model/ocorrencias_model.dart';
+import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert'; // Importante para decodificar a resposta JSON
 
 class MinhasOcorrenciasPage extends StatefulWidget {
   const MinhasOcorrenciasPage({super.key});
@@ -12,34 +15,53 @@ class MinhasOcorrenciasPage extends StatefulWidget {
 
 class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
   List<OcorrenciasModel> ocorrencias = [];
+  List<dynamic> ocorrenciasFiltradas = [];
+  final TextEditingController _pesquisarController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     getOcorrencias();
+    _pesquisarController.addListener(_filtrarOcorrencias);
   }
 
   Future<void> getOcorrencias() async {
-    final dio = Dio();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
         'https://pmc.airsoftcontrol.com.br/ocorrencias/usuario/$idUsuario';
 
     try {
-      final Response response = await dio.get(url);
+      // Fazendo a requisição HTTP usando o pacote 'http'
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-        ocorrencias = data.map((e) => OcorrenciasModel.fromJson(e)).toList();
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          ocorrencias = data.map((e) => OcorrenciasModel.fromJson(e)).toList();
+        });
+      } else {
+        // Lidar com erro de resposta
+        debugPrint('Erro: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Erro ao buscar ocorrências: $e');
     }
   }
 
+  void _filtrarOcorrencias() {
+    String pesquisar = _pesquisarController.text.toLowerCase();
+    setState(() {
+      ocorrenciasFiltradas = ocorrencias.where((ocorrencia) {
+        final descricao = ocorrencia.descricao?.toLowerCase() ?? '';
+        return descricao.contains(pesquisar);
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -53,23 +75,27 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
               children: [
                 SizedBox(height: 16),
                 TextField(
+                  controller: _pesquisarController,
                   decoration: InputDecoration(
-                    labelText: 'Pesquisar Ocorrência',
-                    labelStyle:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 1.5),
+                    labelText: 'Pesquisar',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
                     ),
                     enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
                       borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.tertiary),
+                          color: themeProvider.themeData.colorScheme.primary),
                     ),
-                    suffixIcon: const Icon(Icons.search, size: 22),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      borderSide: BorderSide(
+                          color: themeProvider.themeData.colorScheme.primary,
+                          width: 2),
+                    ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Expanded(
                   child: ocorrencias.isEmpty
                       ? const Center(child: Text('Nenhum cliente encontrado.'))
@@ -101,7 +127,8 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                                           style: const TextStyle(fontSize: 14)),
                                       Text('Data: ${ocorrencia.data}',
                                           style: const TextStyle(fontSize: 14)),
-                                      Text('Coordenadas de Localização: ${ocorrencia.latitude} - ${ocorrencia.longitude}',
+                                      Text(
+                                          'Coordenadas de Localização: ${ocorrencia.latitude} - ${ocorrencia.longitude}',
                                           style: const TextStyle(fontSize: 14)),
                                     ],
                                   ),

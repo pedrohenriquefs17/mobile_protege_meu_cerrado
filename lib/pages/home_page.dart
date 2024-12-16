@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mobile_protege_meu_cerrado/components/custom_bottom_navbar.dart';
 import 'package:mobile_protege_meu_cerrado/components/info_card.dart';
+import 'package:mobile_protege_meu_cerrado/pages/notificacao_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/perfil_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/config_page..dart';
@@ -66,8 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Avatar do usuário
             CircleAvatar(
               radius: 20,
               backgroundImage: _image != null
@@ -75,24 +77,52 @@ class _HomeScreenState extends State<HomeScreen> {
                   : const AssetImage('assets/images/default_profile.png')
                       as ImageProvider,
             ),
-            const SizedBox(width: 30),
-            const Text(
-              'Protege Meu Cerrado',
-              style: TextStyle(color: Colors.white),
-            ),
-            const SizedBox(width: 30), // Espaçamento entre o título e o toggle
-            IconButton(
-              icon: Icon(
-                themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                color: Colors.white,
+
+            // Título do app
+            Flexible(
+              child: Center(
+                child: Text(
+                  'Protege Meu Cerrado',
+                  style: const TextStyle(color: Colors.white),
+                  overflow: TextOverflow.ellipsis, // Evita quebra de texto
+                ),
               ),
-              onPressed: () {
-                themeProvider.toggleTheme();
-              },
+            ),
+
+            // Ícones à direita
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.dark_mode
+                        : Icons.light_mode,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    themeProvider.toggleTheme();
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.notifications,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificacaoPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
-        centerTitle: true, // Garante que o título esteja centralizado
+        centerTitle: false, // Para ajustar o layout do título dinamicamente
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: CurvedNavigationBar(

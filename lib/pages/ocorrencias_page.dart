@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_protege_meu_cerrado/pages/minhas_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/ocorrencia_detail_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class OcorrenciasPage extends StatefulWidget {
   const OcorrenciasPage({super.key});
@@ -16,11 +20,43 @@ class OcorrenciasPage extends StatefulWidget {
 
 class _OcorrenciasPageState extends State<OcorrenciasPage> {
   bool isLogado = false;
+  bool isLoading = true;
+  List<dynamic> ocorrencias = [];
+  List<dynamic> ocorrenciasFiltradas = [];
+  final TextEditingController _pesquisarController = TextEditingController();
 
   @override
   initState() {
     super.initState();
     _estaLogado();
+    _fetchOcorrencias();
+    _pesquisarController.addListener(_filtrarOcorrencias);
+  }
+
+  Future<void> _fetchOcorrencias() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://pmc.airsoftcontrol.com.br/ocorrencias'),
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          ocorrencias = jsonDecode(response.body);
+          ocorrenciasFiltradas = List.from(ocorrencias);
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Falha ao carregar as ocorrências');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar dados: $e'),
+        ),
+      );
+    }
   }
 
   Future<void> _estaLogado() async {
@@ -30,11 +66,23 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
       setState(() {
         isLogado = true;
       });
+      await _fetchOcorrencias();
     } else {
       setState(() {
         isLogado = false;
+        isLoading = false;
       });
     }
+  }
+
+  void _filtrarOcorrencias() {
+    String pesquisar = _pesquisarController.text.toLowerCase();
+    setState(() {
+      ocorrenciasFiltradas = ocorrencias.where((ocorrencia) {
+        final descricao = ocorrencia['descricao']?.toLowerCase() ?? '';
+        return descricao.contains(pesquisar);
+      }).toList();
+    });
   }
 
   @override
@@ -58,6 +106,30 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Barra de pesquisa
+            TextField(
+              controller: _pesquisarController,
+              decoration: InputDecoration(
+                labelText: 'Pesquisar',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  borderSide: BorderSide(
+                      color: themeProvider.themeData.colorScheme.primary),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  borderSide: BorderSide(
+                      color: themeProvider.themeData.colorScheme.primary,
+                      width: 2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Botões
             Row(
               children: [
                 // Botão "Nova Ocorrência"
@@ -91,14 +163,15 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                         );
                       } else {
                         Fluttertoast.showToast(
-                            msg:
-                                "Você precisa estar logado para acessar suas ocorrências.",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
+                          msg:
+                              "Você precisa estar logado para acessar suas ocorrências.",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
                       }
                     },
                     label: const Text('Minhas Ocorrências'),
@@ -112,128 +185,129 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 16), // Espaço entre os botões e a lista
+            const SizedBox(height: 16),
+            // Lista de ocorrências
             Expanded(
-              child: ListView.builder(
-                itemCount: 5, // Exemplo: 5 ocorrências
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 4,
-                    shadowColor: themeProvider.themeData.colorScheme.onSurface
-                        .withOpacity(0.2),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Carrossel de Imagens
-                        CarouselSlider(
-                          options: CarouselOptions(
-                            height: 200.0,
-                            autoPlay: true,
-                            enlargeCenterPage: true,
-                            aspectRatio: 16 / 9,
-                            viewportFraction: 0.8,
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ocorrenciasFiltradas.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'Nenhuma ocorrência encontrada.',
+                            style: TextStyle(fontSize: 16),
                           ),
-                          items: [
-                            'assets/images/queimada1.jpeg',
-                            'assets/images/queimada2.jpg',
-                            'assets/images/queimada3.jpg',
-                          ].map((path) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
-                                  child: Image.asset(
-                                    path,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
+                        )
+                      : ListView.builder(
+                          itemCount: ocorrenciasFiltradas.length,
+                          itemBuilder: (context, index) {
+                            final ocorrencia = ocorrenciasFiltradas[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        OcorrenciaDetalhesPage(
+                                      ocorrencia: ocorrencia,
+                                    ),
                                   ),
                                 );
                               },
+                              child: Card(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 6,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Placeholder para imagem
+                                    Container(
+                                      height: 180,
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(16),
+                                          topRight: Radius.circular(16),
+                                        ),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.grey.shade400,
+                                            Colors.grey.shade300,
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Text(
+                                        'Sem imagens',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            ocorrencia['descricao'] ??
+                                                'Sem descrição',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.calendar_today_outlined,
+                                                size: 16,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Data: ${ocorrencia['dt_ocorrencia'] ?? 'Não informada'}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.location_on_outlined,
+                                                size: 16,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  'Localização: ${ocorrencia['lat']}, ${ocorrencia['lon']}',
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
-                          }).toList(),
+                          },
                         ),
-
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Ocorrência ${index + 1}',
-                                style: themeProvider
-                                    .themeData.textTheme.titleMedium
-                                    ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: themeProvider
-                                      .themeData.colorScheme.onSurface,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Descrição breve da ocorrência aqui. Local: Parque Nacional do Cerrado.',
-                                style: themeProvider
-                                    .themeData.textTheme.bodyMedium
-                                    ?.copyWith(
-                                  color: themeProvider
-                                      .themeData.colorScheme.onSurface
-                                      .withOpacity(0.7),
-                                ),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.thumb_up_alt_outlined,
-                                          color: themeProvider
-                                              .themeData.colorScheme.secondary,
-                                        ),
-                                        onPressed: () {
-                                          // Lógica para curtir
-                                        },
-                                      ),
-                                      const Text('123'),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.comment_outlined,
-                                          color: themeProvider
-                                              .themeData.colorScheme.secondary,
-                                        ),
-                                        onPressed: () {
-                                          // Lógica para comentar
-                                        },
-                                      ),
-                                      const Text('45'),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
             ),
           ],
         ),

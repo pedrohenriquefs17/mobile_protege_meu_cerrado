@@ -16,7 +16,6 @@ class NovaOcorrenciaPage extends StatefulWidget {
   const NovaOcorrenciaPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _NovaOcorrenciaPageState createState() => _NovaOcorrenciaPageState();
 }
 
@@ -101,22 +100,21 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     final posicaoController =
         Provider.of<PosicaoController>(context, listen: false);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int idUsuario = prefs.getInt('idUsuario') ?? 0;
     final dio = Dio();
 
     final String url = 'https://pmc.airsoftcontrol.com.br/ocorrencias';
 
     final Map<String, dynamic> data = {
-      "idUser": idUsuario == 0 ? null : idUsuario,
-      "idCategoria": int.tryParse(_categoriaSelecionada ?? ''),
+      "id_user": prefs.getInt('idUsuario'),
+      "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
       "nome": isSwitched ? null : _nomeController.text.trim(),
       "email": isSwitched ? null : _emailController.text.trim(),
       "cpf": isSwitched ? null : _cpfController.text.trim(),
       "telefone": isSwitched ? null : _telefoneController.text.trim(),
-      "dtNasc": isSwitched ? null : _dataNascimentoController.text.trim(),
+      "dt_nasc": isSwitched ? null : _dataNascimentoController.text.trim(),
       "descricao": _descricaoController.text.trim(),
-      "isAnon": isSwitched,
-      "dtOcorrencia": _dataController.text.trim(),
+      "is_anon": isSwitched,
+      "dt_ocorrencia": _dataController.text.trim(),
       "lat": posicaoController.latitude.toString(),
       "lon": posicaoController.longitude.toString(),
     };
@@ -259,17 +257,9 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
               const SizedBox(height: 16),
               Consumer<PosicaoController>(
                 builder: (context, posicaoController, child) {
-                  return Column(
-                    children: [
-                      Text(
-                        'Latitude: ${posicaoController.latitude}',
-                        style: themeProvider.themeData.textTheme.bodyLarge,
-                      ),
-                      Text(
-                        'Longitude: ${posicaoController.longitude}',
-                        style: themeProvider.themeData.textTheme.bodyLarge,
-                      ),
-                    ],
+                  return Text(
+                    'Latitude: ${posicaoController.latitude} - Longitude: ${posicaoController.longitude}',
+                    style: themeProvider.themeData.textTheme.bodyLarge,
                   );
                 },
               ),
