@@ -98,7 +98,8 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                 const SizedBox(height: 16),
                 Expanded(
                   child: ocorrencias.isEmpty
-                      ? const Center(child: Text('Nenhum cliente encontrado.'))
+                      ? const Center(
+                          child: Text('Nenhuma ocorrência encontrada.'))
                       : ListView.builder(
                           itemCount: ocorrencias.length,
                           itemBuilder: (context, index) {

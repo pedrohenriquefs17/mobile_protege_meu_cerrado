@@ -45,17 +45,13 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
           isLoading = false;
         });
       } else {
-        throw Exception('Falha ao carregar as ocorrências');
+        debugPrint('Erro ao carregar as ocorrências: ${response.statusCode}');
       }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao carregar dados: $e'),
-        ),
-      );
+      debugPrint('Erro na requisição: $e');
     }
   }
 
