@@ -11,6 +11,8 @@ import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
 
 class NovaOcorrenciaPage extends StatefulWidget {
   const NovaOcorrenciaPage({super.key});
@@ -48,7 +50,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   Future<void> _fetchCategorias() async {
     try {
       Response response = await _dio.get(
-        "https://pmc.airsoftcontrol.com.br/ocorrencias/categorias",
+        "http://localhost:8080/ocorrencias/categorias",
         options: Options(
           headers: {
             "Accept": "*/*",
@@ -59,7 +61,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
       setState(() {
         _categorias = List<Map<String, dynamic>>.from(response.data);
-        debugPrint("id_categoria: $_categoriaSelecionada");
+        debugPrint("idCategoria: $_categoriaSelecionada");
       });
     } catch (e) {
       debugPrint("Erro ao carregar categorias: $e");
@@ -69,10 +71,28 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
 
   Future<void> _pegarImagem() async {
     final ImagePicker picker = ImagePicker();
+    // Selecionando múltiplas imagens
     final List<XFile> imagens = await picker.pickMultiImage();
-    setState(() {
-      _imagens.addAll(imagens);
-    });
+
+    if (imagens.isNotEmpty) {
+      // Iterando pelas imagens selecionadas
+      for (var imagem in imagens) {
+        // Carregar a imagem selecionada
+        final bytes = await imagem.readAsBytes();
+        img.Image? image = img.decodeImage(Uint8List.fromList(bytes));
+
+        if (image != null) {
+          // Converter para PNG
+          final pngBytes = img.encodePng(image);
+
+          // Adicionar a imagem convertida à lista
+          setState(() {
+            // Aqui você adiciona a imagem convertida em formato PNG
+            _imagens.add(XFile.fromData(pngBytes, name: 'image.png'));
+          });
+        }
+      }
+    }
   }
 
   Future<void> _formatarData() async {
@@ -102,48 +122,52 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final dio = Dio();
 
-    final String url = 'https://pmc.airsoftcontrol.com.br/ocorrencias';
+    final String url = 'http://localhost:8080/ocorrencias';
 
     final Map<String, dynamic> data = {
-      "id_user": prefs.getInt('idUsuario'),
-      "id_categoria": int.tryParse(_categoriaSelecionada ?? ''),
+      "idUser": prefs.getInt('idUsuario'),
+      "idCategoria": int.tryParse(_categoriaSelecionada ?? ''),
       "nome": isSwitched ? null : _nomeController.text.trim(),
       "email": isSwitched ? null : _emailController.text.trim(),
       "cpf": isSwitched ? null : _cpfController.text.trim(),
       "telefone": isSwitched ? null : _telefoneController.text.trim(),
-      "dt_nasc": isSwitched ? null : _dataNascimentoController.text.trim(),
+      "dtNasc": isSwitched ? null : _dataNascimentoController.text.trim(),
       "descricao": _descricaoController.text.trim(),
-      "is_anon": isSwitched,
-      "dt_ocorrencia": _dataController.text.trim(),
+      "isAnon": isSwitched,
+      "dtOcorrencia": _dataController.text.trim(),
       "lat": posicaoController.latitude.toString(),
       "lon": posicaoController.longitude.toString(),
     };
-    debugPrint('Data: $data');
+
+    final formData = FormData.fromMap(data);
+
+    if (_imagens.isNotEmpty) {
+      for (var imagem in _imagens) {
+        formData.files.add(MapEntry(
+          'imagem',
+          await MultipartFile.fromFile(imagem.path, filename: 'image.png'),
+        ));
+      }
+    }
 
     try {
-      final Response response = await dio.post(url, data: data);
+      final Response response = await dio.post(url, data: formData);
 
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final responseData = response.data;
         Fluttertoast.showToast(
-          msg: responseData.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
+          msg: 'Ocorrência enviada com sucesso!',
           backgroundColor: Colors.green,
           textColor: Colors.white,
-          fontSize: 16.0,
         );
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.of(context).pop();
         });
       } else {
-        debugPrint('Erro ao cadastrar ocorrência: ${response.data}');
-        Fluttertoast.showToast(msg: 'Erro ao cadastrar ocorrência.');
+        Fluttertoast.showToast(msg: 'Erro ao enviar ocorrência.');
       }
     } catch (e) {
-      debugPrint('Erro na requisição: $e');
+      Fluttertoast.showToast(msg: 'Erro na requisição.');
     }
   }
 

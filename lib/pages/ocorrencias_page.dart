@@ -36,7 +36,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
   Future<void> _fetchOcorrencias() async {
     try {
       final response = await http.get(
-        Uri.parse('https://pmc.airsoftcontrol.com.br/ocorrencias'),
+        Uri.parse('http://localhost:8080/ocorrencias'),
       );
       if (response.statusCode == 200) {
         setState(() {
@@ -272,7 +272,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                               ),
                                               const SizedBox(width: 8),
                                               Text(
-                                                'Data: ${ocorrencia['dt_ocorrencia'] ?? 'Não informada'}',
+                                                'Data: ${ocorrencia['dtOcorrencia'] ?? 'Não informada'}',
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                 ),
