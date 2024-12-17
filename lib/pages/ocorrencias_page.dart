@@ -33,13 +33,26 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
   }
 
   Future<void> _fetchOcorrencias() async {
+    final String baseUrl =
+        'http://192.168.22.31:8080'; // Base URL do seu servidor
+
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.0.206:8080/ocorrencias'), //colocar seu ip
+        Uri.parse('http://192.168.22.31:8080/ocorrencias'),
       );
+
       if (response.statusCode == 200) {
         setState(() {
-          ocorrencias = jsonDecode(response.body);
+          ocorrencias = jsonDecode(response.body).map((ocorrencia) {
+            if (ocorrencia['imagem'] != null &&
+                ocorrencia['imagem'].isNotEmpty &&
+                !ocorrencia['imagem'].startsWith('http')) {
+              // Se a imagem for um caminho local, adiciona a URL base
+              ocorrencia['imagem'] =
+                  '$baseUrl/uploads/${ocorrencia['imagem'].split('/').last}';
+            }
+            return ocorrencia;
+          }).toList();
           ocorrenciasFiltradas = List.from(ocorrencias);
           isLoading = false;
         });
@@ -219,31 +232,48 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Placeholder para imagem
-                                    Container(
-                                      height: 180,
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(16),
-                                          topRight: Radius.circular(16),
-                                        ),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.grey.shade400,
-                                            Colors.grey.shade300,
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
+                                    // Verifica se há uma URL de imagem, caso contrário exibe um placeholder
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(16),
+                                        topRight: Radius.circular(16),
                                       ),
-                                      alignment: Alignment.center,
-                                      child: const Text(
-                                        'Sem imagens',
-                                        style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                                      child: ocorrencia['imagem'] != null &&
+                                              ocorrencia['imagem'].isNotEmpty
+                                          ? Image.network(
+                                              ocorrencia['imagem'],
+                                              height: 180,
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Container(
+                                                  height: 180,
+                                                  color: Colors.grey.shade300,
+                                                  child: const Center(
+                                                    child: Text(
+                                                      'Erro ao carregar imagem',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.black54),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                          : Container(
+                                              height: 180,
+                                              color: Colors.grey.shade300,
+                                              child: const Center(
+                                                child: Text(
+                                                  'Sem imagem',
+                                                  style: TextStyle(
+                                                      color: Colors.black54),
+                                                ),
+                                              ),
+                                            ),
                                     ),
+
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(
