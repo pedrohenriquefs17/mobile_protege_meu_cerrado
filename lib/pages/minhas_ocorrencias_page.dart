@@ -29,7 +29,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'http://192.168.22.31:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
+        'http://192.168.56.1:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
 
     try {
       // Fazendo a requisição HTTP usando o pacote 'http'
