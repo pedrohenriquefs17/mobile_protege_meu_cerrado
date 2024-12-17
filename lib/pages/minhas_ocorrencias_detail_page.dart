@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/model/ocorrencias_model.dart';
 
@@ -7,6 +9,7 @@ class MinhasOcorrenciasDetailPage extends StatelessWidget {
   final String dataOcorrencia;
   final String latitude;
   final String longitude;
+  final String imagem;
 
   const MinhasOcorrenciasDetailPage(
       {super.key,
@@ -14,7 +17,8 @@ class MinhasOcorrenciasDetailPage extends StatelessWidget {
       required this.categoria,
       required this.dataOcorrencia,
       required this.latitude,
-      required this.longitude});
+      required this.longitude,
+      required this.imagem});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,7 @@ class MinhasOcorrenciasDetailPage extends StatelessWidget {
       dataOcorrencia: dataOcorrencia,
       latitude: latitude,
       longitude: longitude,
+      imagem: imagem,
     );
     final String categoriaString = categoria;
 
@@ -132,9 +137,16 @@ class MinhasOcorrenciasDetailPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              Image.file(
+                File(ocorrencia.imagem),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Text('Imagem local não encontrada.');
+                },
+              ),
 
-              // Botão para voltar (ou realizar ação adicional)
+              const SizedBox(height: 16),
+              
               Center(
                 child: ElevatedButton.icon(
                   onPressed: () {

@@ -4,13 +4,15 @@ class OcorrenciasModel {
   final String dataOcorrencia;
   final String latitude;
   final String longitude;
+  final String imagem;
 
   OcorrenciasModel(
       {required this.descricao,
       required this.categoria,
       required this.dataOcorrencia,
       required this.latitude,
-      required this.longitude});
+      required this.longitude,
+      required this.imagem});
 
   factory OcorrenciasModel.fromJson(Map<String, dynamic> json) {
     return OcorrenciasModel(
@@ -20,6 +22,7 @@ class OcorrenciasModel {
       dataOcorrencia: json['dtOcorrencia'] ?? '',
       latitude: json['lat'] ?? '',
       longitude: json['lon'] ?? '',
+      imagem: json['imagem'] ?? '',
     );
   }
 
@@ -30,6 +33,7 @@ class OcorrenciasModel {
       'dtOcorrencia': dataOcorrencia,
       'lat': latitude,
       'lon': longitude,
+      'imagem': imagem,
     };
   }
 }

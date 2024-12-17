@@ -156,6 +156,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                                                 ocorrencia.dataOcorrencia,
                                             latitude: ocorrencia.latitude,
                                             longitude: ocorrencia.longitude,
+                                            imagem: ocorrencia.imagem,
                                           ),
                                         ),
                                       );
