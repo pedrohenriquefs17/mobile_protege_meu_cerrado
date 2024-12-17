@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile_protege_meu_cerrado/model/ocorrencias_model.dart';
+import 'package:mobile_protege_meu_cerrado/pages/minhas_ocorrencias_detail_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,22 +19,38 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
   List<OcorrenciasModel> ocorrencias = [];
   List<dynamic> ocorrenciasFiltradas = [];
   final TextEditingController _pesquisarController = TextEditingController();
+  List<dynamic> categorias = [];
+  bool isLoading = true; // Adiciona a variável de controle
 
   @override
   void initState() {
     super.initState();
-    getOcorrencias();
+    carregarDados();
     _pesquisarController.addListener(_filtrarOcorrencias);
+  }
+
+  Future<void> carregarDados() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.wait([
+      getOcorrencias(),
+      getCategorias(),
+    ]);
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> getOcorrencias() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'http://192.168.56.1:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
+        'http://meu_ip:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
 
     try {
-      // Fazendo a requisição HTTP usando o pacote 'http'
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -41,11 +59,26 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
           ocorrencias = data.map((e) => OcorrenciasModel.fromJson(e)).toList();
         });
       } else {
-        // Lidar com erro de resposta
         debugPrint('Erro: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Erro ao buscar ocorrências: $e');
+    }
+  }
+
+  Future<void> getCategorias() async {
+    String url = 'http://meu_ip:8080/ocorrencias/categorias';
+    Dio dio = Dio();
+
+    try {
+      Response response = await dio.get(url);
+      if (response.statusCode == 200) {
+        setState(() {
+          categorias = response.data.map((e) => e['nomeCategoria']).toList();
+        });
+      }
+    } catch (e) {
+      debugPrint('Erro ao buscar categorias: $e');
     }
   }
 
@@ -67,85 +100,114 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
         centerTitle: true,
         title: Text("Minhas Ocorrências"),
       ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator()) // Indicador de carregamento
+          : Stack(
               children: [
-                SizedBox(height: 16),
-                TextField(
-                  controller: _pesquisarController,
-                  decoration: InputDecoration(
-                    labelText: 'Pesquisar',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: BorderSide(
-                          color: themeProvider.themeData.colorScheme.primary),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: BorderSide(
-                          color: themeProvider.themeData.colorScheme.primary,
-                          width: 2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ocorrencias.isEmpty
-                      ? const Center(
-                          child: Text('Nenhuma ocorrência encontrada.'))
-                      : ListView.builder(
-                          itemCount: ocorrencias.length,
-                          itemBuilder: (context, index) {
-                            final ocorrencia = ocorrencias[index];
-                            return GestureDetector(
-                              onTap: () {},
-                              child: Card(
-                                elevation: 4,
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: ListTile(
-                                  title: Text(
-                                    ocorrencia.categoria.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Descrição: ${ocorrencia.descricao}',
-                                          style: const TextStyle(fontSize: 14)),
-                                      Text('Data: ${ocorrencia.dataOcorrencia}',
-                                          style: const TextStyle(fontSize: 14)),
-                                      Text(
-                                          'Coordenadas de Localização: ${ocorrencia.latitude} - ${ocorrencia.longitude}',
-                                          style: const TextStyle(fontSize: 14)),
-                                    ],
-                                  ),
-                                  trailing: const Icon(Icons.arrow_forward_ios),
-                                  contentPadding: const EdgeInsets.all(16),
-                                ),
-                              ),
-                            );
-                          },
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 16),
+                      TextField(
+                        controller: _pesquisarController,
+                        decoration: InputDecoration(
+                          labelText: 'Pesquisar',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(50),
+                            borderSide: BorderSide(
+                                color: themeProvider
+                                    .themeData.colorScheme.primary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(50),
+                            borderSide: BorderSide(
+                                color:
+                                    themeProvider.themeData.colorScheme.primary,
+                                width: 2),
+                          ),
                         ),
-                ),
+                      ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: ocorrencias.isEmpty
+                            ? const Center(
+                                child: Text('Nenhuma ocorrência encontrada.'))
+                            : ListView.builder(
+                                itemCount: ocorrencias.length,
+                                itemBuilder: (context, index) {
+                                  final ocorrencia = ocorrencias[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              MinhasOcorrenciasDetailPage(
+                                            descricao: ocorrencia.descricao,
+                                            categoria: categorias[
+                                                ocorrencia.categoria - 1],
+                                            dataOcorrencia:
+                                                ocorrencia.dataOcorrencia,
+                                            latitude: ocorrencia.latitude,
+                                            longitude: ocorrencia.longitude,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Card(
+                                      elevation: 4,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: ListTile(
+                                        title: Text(
+                                          categorias[ocorrencia.categoria - 1],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                'Descrição: ${ocorrencia.descricao}',
+                                                style: const TextStyle(
+                                                    fontSize: 14)),
+                                            Text(
+                                                'Data: ${ocorrencia.dataOcorrencia}',
+                                                style: const TextStyle(
+                                                    fontSize: 14)),
+                                            Text(
+                                                'Coordenadas de Localização: ${ocorrencia.latitude} - ${ocorrencia.longitude}',
+                                                style: const TextStyle(
+                                                    fontSize: 14)),
+                                          ],
+                                        ),
+                                        trailing:
+                                            const Icon(Icons.arrow_forward_ios),
+                                        contentPadding:
+                                            const EdgeInsets.all(16),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
-      ),
     );
   }
 }
