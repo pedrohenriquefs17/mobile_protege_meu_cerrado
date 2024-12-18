@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_button_login.dart';
 import 'package:mobile_protege_meu_cerrado/components/my_cadastrar_text_button.dart';
@@ -8,6 +9,8 @@ import 'package:mobile_protege_meu_cerrado/components/my_textfield.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,6 +28,18 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _loadLoginData();
+
+    //para mudanças do token FMC
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .update({'fmcToken': newToken});
+      }
+    });
   }
 
   Future<void> _loadLoginData() async {
@@ -107,23 +122,49 @@ class _LoginPageState extends State<LoginPage> {
           final int idUsuario =
               int.tryParse(responseData['idUsuario'].toString()) ?? 0;
 
-          // Salva o token e o ID do usuário no SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
-          await prefs.setInt('idUsuario', idUsuario);
+          // Login com Firebase Anônimo
+          try {
+            final userCredential =
+                await FirebaseAuth.instance.signInAnonymously();
+            debugPrint(
+                "Usuário autenticado com Firebase: ${userCredential.user!.uid}");
 
-          Fluttertoast.showToast(
-            msg: "Login realizado com sucesso!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
+            final String firebaseUID = userCredential.user!.uid;
+            final fmcToken = await FirebaseMessaging.instance.getToken();
 
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, '/home');
-          });
+            await FirebaseFirestore.instance
+                .collection('usuarios')
+                .doc(firebaseUID)
+                .set({
+              'idUsuario': idUsuario,
+              'email': enteredEmail,
+              'tokenPMC': token,
+              'fmcToken': fmcToken,
+              'lastLogin': FieldValue.serverTimestamp(),
+            });
+
+            // Salva o token e o ID do usuário no SharedPreferences
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('token', token);
+            await prefs.setInt('idUsuario', idUsuario);
+
+            Fluttertoast.showToast(
+              msg: "Login realizado com sucesso!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacementNamed(context, '/home');
+            });
+          } catch (e) {
+            debugPrint("Erro ao autenticar com Firebase: $e");
+            Fluttertoast.showToast(
+                msg: "Erro ao autenticar com Firebase. Tente novamente.");
+          }
         } else {
           Fluttertoast.showToast(msg: 'Erro ao processar os dados de login.');
         }
