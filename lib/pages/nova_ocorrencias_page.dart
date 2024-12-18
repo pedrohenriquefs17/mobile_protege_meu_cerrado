@@ -49,7 +49,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   Future<void> _fetchCategorias() async {
     try {
       Response response = await _dio.get(
-        "http://192.168.0.227:8080/ocorrencias/categorias", //colocar seu ip
+        "http://192.168.0.205:8080/ocorrencias/categorias", //colocar seu ip
         options: Options(
           headers: {
             "Accept": "*/*",
@@ -109,7 +109,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final dio = Dio();
 
-    final String url = 'http://192.168.0.227:8080/ocorrencias'; //colocar seu ip
+    final String url = 'http://192.168.0.205:8080/ocorrencias'; //colocar seu ip
 
     final Map<String, dynamic> data = {
       "idUser": prefs.getInt('idUsuario'),
