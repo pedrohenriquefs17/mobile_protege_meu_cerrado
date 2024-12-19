@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mobile_protege_meu_cerrado/components/info_card.dart';
@@ -22,6 +23,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   File? _image;
+  String? nome;
+
+  @override
+  void initState() {
+    super.initState();
+    getNomeUsuario();
+  }
 
   // Lista de páginas para navegação
   final List<Widget> _pages = [
@@ -59,6 +67,22 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> getNomeUsuario() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('idUsuario');
+
+    Dio dio = Dio();
+    String url =
+        'https://pmc.airsoftcontrol.com.br/pmc/listar/usuario?usuario=$id';
+    Response response = await dio.get(url);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        nome = response.data['nome'].toString();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -81,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Flexible(
               child: Center(
                 child: Text(
-                  'Olá, [Nome]',
+                  'Olá, ${nome ?? 'Usuário'}',
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge
