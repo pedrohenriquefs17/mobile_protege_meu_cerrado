@@ -35,16 +35,24 @@ class OcorrenciaDetalhesPage extends StatelessWidget {
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today_outlined, size: 16),
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            size: 16,
+                            color: Colors.white,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             'Data: ${ocorrencia['dt_ocorrencia']?.toString() ?? 'Não informada'}',
-                            style: const TextStyle(fontSize: 16),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
@@ -61,14 +69,24 @@ class OcorrenciaDetalhesPage extends StatelessWidget {
                 ),
                 elevation: 4,
                 child: ListTile(
-                  leading: const Icon(Icons.location_on_outlined, size: 32),
+                  leading: const Icon(
+                    Icons.location_on_outlined,
+                    size: 32,
+                    color: Colors.white,
+                  ),
                   title: const Text(
                     'Localização',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   subtitle: Text(
                     '${ocorrencia['lat']}, ${ocorrencia['lon']}',
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -81,14 +99,24 @@ class OcorrenciaDetalhesPage extends StatelessWidget {
                 ),
                 elevation: 4,
                 child: ListTile(
-                  leading: const Icon(Icons.info_outline, size: 32),
+                  leading: const Icon(
+                    Icons.info_outline,
+                    size: 32,
+                    color: Colors.white,
+                  ),
                   title: const Text(
                     'Status',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   subtitle: Text(
                     ocorrencia['id_status']?.toString() ?? 'Desconhecido',
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

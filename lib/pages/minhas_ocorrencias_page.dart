@@ -48,7 +48,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'http://192.168.0.205:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
+        'http://meu_ip:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -67,7 +67,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
   }
 
   Future<void> getCategorias() async {
-    String url = 'http://192.168.0.205:8080/ocorrencias/categorias';
+    String url = 'http://meu_ip:8080/ocorrencias/categorias';
     Dio dio = Dio();
 
     try {
@@ -174,6 +174,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                                           style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600,
+                                            color: Colors.white,
                                           ),
                                         ),
                                         subtitle: Column(
@@ -183,19 +184,27 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                                             Text(
                                                 'Descrição: ${ocorrencia.descricao}',
                                                 style: const TextStyle(
-                                                    fontSize: 14)),
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                )),
                                             Text(
                                                 'Data: ${ocorrencia.dataOcorrencia}',
                                                 style: const TextStyle(
-                                                    fontSize: 14)),
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                )),
                                             Text(
                                                 'Coordenadas de Localização: ${ocorrencia.latitude} - ${ocorrencia.longitude}',
                                                 style: const TextStyle(
-                                                    fontSize: 14)),
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                )),
                                           ],
                                         ),
-                                        trailing:
-                                            const Icon(Icons.arrow_forward_ios),
+                                        trailing: const Icon(
+                                          Icons.arrow_forward_ios,
+                                          color: Colors.white,
+                                        ),
                                         contentPadding:
                                             const EdgeInsets.all(16),
                                       ),

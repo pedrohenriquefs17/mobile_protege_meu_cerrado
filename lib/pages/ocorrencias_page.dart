@@ -33,12 +33,11 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
   }
 
   Future<void> _fetchOcorrencias() async {
-    final String baseUrl =
-        'http://192.168.0.205:8080'; // Base URL do seu servidor
+    final String baseUrl = 'http://meu_ip:8080'; // Base URL do seu servidor
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.0.205:8080/ocorrencias'),
+        Uri.parse('http://meu_ip:8080/ocorrencias'),
       );
 
       if (response.statusCode == 200) {
@@ -286,6 +285,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 18,
+                                              color: Colors.white,
                                             ),
                                           ),
                                           const SizedBox(height: 8),
@@ -294,12 +294,14 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                               const Icon(
                                                 Icons.calendar_today_outlined,
                                                 size: 16,
+                                                color: Colors.white,
                                               ),
                                               const SizedBox(width: 8),
                                               Text(
                                                 'Data: ${ocorrencia['dtOcorrencia'] ?? 'Não informada'}',
                                                 style: const TextStyle(
                                                   fontSize: 14,
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ],
@@ -310,6 +312,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                               const Icon(
                                                 Icons.location_on_outlined,
                                                 size: 16,
+                                                color: Colors.white,
                                               ),
                                               const SizedBox(width: 8),
                                               Expanded(
@@ -317,6 +320,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                                   'Localização: ${ocorrencia['lat']}, ${ocorrencia['lon']}',
                                                   style: const TextStyle(
                                                     fontSize: 14,
+                                                    color: Colors.white,
                                                   ),
                                                   overflow:
                                                       TextOverflow.ellipsis,
