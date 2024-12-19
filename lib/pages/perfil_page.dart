@@ -72,11 +72,23 @@ class _PerfilPageState extends State<PerfilPage> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ThemeProvider>(context);
+    ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'),
+        title: const Text(
+          'Perfil',
+          style: TextStyle(fontSize: 18), // Ajuste o tamanho da fonte aqui
+        ),
+        backgroundColor: themeProvider
+            .themeData.colorScheme.surface, // Cor igual ao fundo da tela
+        elevation: 0, // Remover a sombra da AppBar
+        centerTitle: true, // Centralizar o título
+        titleTextStyle: TextStyle(
+          color: themeProvider.themeData.brightness == Brightness.dark
+              ? Colors.white // Cor preta no modo escuro
+              : Colors.black, // Cor branca no modo claro
+        ),
       ),
       body: Center(
         child: Column(

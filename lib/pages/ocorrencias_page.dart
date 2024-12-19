@@ -103,11 +103,14 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
           'Ocorrências Populares',
           style: themeProvider.themeData.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: themeProvider.themeData.colorScheme.onSurface,
+            color: themeProvider.themeData.brightness == Brightness.dark
+                ? Colors.white // Cor branca no modo escuro
+                : Colors.black, // Cor preta no modo claro
           ),
         ),
         backgroundColor: themeProvider.themeData.colorScheme.surface,
         elevation: 0,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

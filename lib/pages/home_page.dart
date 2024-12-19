@@ -81,9 +81,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Flexible(
               child: Center(
                 child: Text(
-                  'Protege Meu Cerrado',
-                  style: const TextStyle(color: Colors.white),
-                  overflow: TextOverflow.ellipsis, // Evita quebra de texto
+                  'Olá, [Nome]',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(color: Colors.white),
                 ),
               ),
             ),
@@ -171,17 +173,26 @@ class HomeContent extends StatelessWidget {
                 ),
                 Container(
                   height: 300,
-                  color: Colors.black.withOpacity(0.4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withOpacity(0.5),
+                        Colors.transparent
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
                 ),
                 Positioned(
                   bottom: 30,
                   left: 20,
                   child: Text(
                     'Protege Meu Cerrado',
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayLarge
-                        ?.copyWith(color: Colors.white, fontSize: 28),
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                          color: Colors.white,
+                          fontSize: 28,
+                        ),
                   ),
                 ),
               ],
@@ -212,7 +223,7 @@ class HomeContent extends StatelessWidget {
                       return Builder(
                         builder: (BuildContext context) {
                           return ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             child: Image.asset(
                               url,
                               fit: BoxFit.cover,
@@ -237,28 +248,71 @@ class HomeContent extends StatelessWidget {
                     style: Theme.of(context).textTheme.displayLarge,
                   ),
                   const SizedBox(height: 10),
-                  FloatingActionButton.extended(
-                    onPressed: () {
-                      Navigator.push(
+
+                  // Botões adicionais com ícones
+                  GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _buildShortcutButton(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const NovaOcorrenciaPage(),
-                        ),
-                      );
-                    },
-                    label: const Text('Nova Ocorrência'),
-                    icon: const Icon(Icons.add),
-                    backgroundColor:
-                        themeProvider.themeData.colorScheme.primary,
-                    foregroundColor:
-                        themeProvider.themeData.colorScheme.onPrimary,
-                    elevation: 4,
+                        label: 'Nova Ocorrência',
+                        icon: Icons.add,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const NovaOcorrenciaPage()),
+                          );
+                        },
+                      ),
+                      _buildShortcutButton(
+                        context,
+                        label: 'Ver Ocorrências',
+                        icon: Icons.report,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const OcorrenciasPage()),
+                          );
+                        },
+                      ),
+                      _buildShortcutButton(
+                        context,
+                        label: 'Notificações',
+                        icon: Icons.notifications,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const NotificacaoPage()),
+                          );
+                        },
+                      ),
+                      _buildShortcutButton(
+                        context,
+                        label: 'Configurações',
+                        icon: Icons.settings,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ConfiguracoesPage()),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 30),
-            // Informações Divididas em Blocos
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -278,6 +332,8 @@ class HomeContent extends StatelessWidget {
                     description:
                         'Descubra como as queimadas impactam o Cerrado e como você pode ajudar a prevenir.',
                     icon: Icons.local_fire_department,
+                    backgroundColor: Color(0xFFFFA500),
+                    iconColor: Colors.red,
                   ),
                   SizedBox(height: 16),
                   InfoCard(
@@ -285,6 +341,8 @@ class HomeContent extends StatelessWidget {
                     description:
                         'O Cerrado é lar de espécies únicas. Aprenda mais sobre sua fauna e flora.',
                     icon: Icons.pets,
+                    backgroundColor: Colors.orange,
+                    iconColor: Colors.red,
                   ),
                   SizedBox(height: 16),
                   InfoCard(
@@ -292,16 +350,55 @@ class HomeContent extends StatelessWidget {
                     description:
                         'Envolva-se em iniciativas que ajudam a preservar o Cerrado e a conscientizar comunidades.',
                     icon: Icons.group,
+                    backgroundColor: Colors.orange,
+                    iconColor: Colors.red,
                   ),
                 ],
               ),
             ),
-            // Espaço extra para evitar que a BottomNavigationBar sobreponha o conteúdo
-            const SizedBox(
-                height: 80), // Ajuste essa altura conforme necessário
+            const SizedBox(height: 80),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildShortcutButton(
+  BuildContext context, {
+  required String label,
+  required IconData icon,
+  required VoidCallback onPressed,
+}) {
+  final themeProvider = Provider.of<ThemeProvider>(context);
+
+  return ElevatedButton(
+    onPressed: onPressed,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: themeProvider.themeData.cardTheme.color,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      elevation: 4,
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          size: 24,
+          color: Colors.white,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14, // Ajustando o tamanho da fonte para um botão menor
+          ),
+        ),
+      ],
+    ),
+  );
 }

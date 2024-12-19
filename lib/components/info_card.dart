@@ -4,12 +4,16 @@ class InfoCard extends StatelessWidget {
   final String title;
   final String description;
   final IconData icon;
+  final Color backgroundColor;
+  final Color iconColor;
 
   const InfoCard({
     required this.title,
     required this.description,
     required this.icon,
     super.key,
+    required this.backgroundColor,
+    required this.iconColor,
   });
 
   @override
@@ -23,8 +27,8 @@ class InfoCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              child: Icon(icon, color: Colors.white, size: 30),
+              backgroundColor: backgroundColor,
+              child: Icon(icon, color: iconColor, size: 30),
             ),
             const SizedBox(width: 16),
             Expanded(

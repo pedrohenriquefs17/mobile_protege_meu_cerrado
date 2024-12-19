@@ -18,7 +18,10 @@ class NotificacaoPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificações'),
+        title: const Text(
+          'Notificações',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: notificationsRef.snapshots(),

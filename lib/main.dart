@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:mobile_protege_meu_cerrado/firebase/firebase.dart';
 import 'package:mobile_protege_meu_cerrado/firebase/notification_service.dart';
 import 'package:mobile_protege_meu_cerrado/pages/cadastro_user_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/config_page..dart';
 import 'package:mobile_protege_meu_cerrado/pages/login_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/notificacao_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
+import 'package:mobile_protege_meu_cerrado/pages/ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/on_boarding_page.dart';
 import 'package:mobile_protege_meu_cerrado/controller/posicao_controller.dart';
 import 'package:provider/provider.dart';
@@ -77,6 +81,10 @@ class MainApp extends StatelessWidget {
                   '/login': (context) => const LoginPage(),
                   '/cadastroUsuario': (context) => const CadastroUserPage(),
                   '/onboarding': (context) => const OnboardingPage(),
+                  '/ocorrencias': (context) => const OcorrenciasPage(),
+                  '/novaOcorrencia': (context) => const NovaOcorrenciaPage(),
+                  '/notificacao': (context) => const NotificacaoPage(),
+                  '/configuracao': (context) => const ConfiguracoesPage(),
                 },
               );
             },
