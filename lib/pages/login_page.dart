@@ -28,7 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _loadLoginData();
-    _checkLoggedIn();
 
     //para mudanças do token FMC
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
@@ -41,16 +40,6 @@ class _LoginPageState extends State<LoginPage> {
             .update({'fmcToken': newToken});
       }
     });
-  }
-
-  Future<void> _checkLoggedIn() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('token');
-    if (token != null && token.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacementNamed(context, '/home');
-      });
-    }
   }
 
   Future<void> _loadLoginData() async {
@@ -304,10 +293,5 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }
-
-  Future<void> _completeOnboarding() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboardingCompleted', true);
   }
 }
