@@ -18,6 +18,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboardingStatus();
+  }
+
+  Future<void> _checkOnboardingStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool onboardingCompleted =
+        prefs.getBool('onboardingCompleted') ?? false;
+
+    if (onboardingCompleted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/login', (route) => false);
+      });
+    }
+  }
+
+  Future<void> _completeOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboardingCompleted', true);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+    });
+  }
+
   Future<void> _entrarSemLogar(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', '');
@@ -67,8 +95,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 children: [
                   _buildBackground(images[index]),
                   _buildContent(screenHeight, themeProvider, index),
+                  _buildSkipButton(screenHeight),
                   if (index != images.length - 1)
                     _buildNextButton(screenHeight),
+                  _buildSkipButton(screenHeight),
                   if (index == images.length - 1)
                     _buildFinalButtons(screenHeight),
                 ],
@@ -76,7 +106,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
             },
           ),
           _buildIndicators(screenHeight),
-          _buildSkipButton(screenHeight),
         ],
       ),
     );
@@ -209,7 +238,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
               backgroundColor: const Color(0xFF38B887),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            onPressed: () => _entrarSemLogar(context),
+            onPressed: () async {
+              await _completeOnboarding();
+              _entrarSemLogar(context);
+            },
             child: const Text(
               "Entrar sem logar",
               style: TextStyle(fontSize: 16, color: Colors.white),
@@ -221,22 +253,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _buildSkipButton(double screenHeight) {
-    return Positioned(
-      top: 40,
-      right: 20,
-      child: TextButton(
-        onPressed: () {
-         _pageController.jumpToPage(images.length - 1);
-        },
-        child: const Text(
-          "Pular",
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
+    return _currentPage != images.length - 1
+        ? Positioned(
+            top: 40,
+            right: 20,
+            child: TextButton(
+              onPressed: () async {
+                _pageController.jumpToPage(images.length - 1);
+                await _completeOnboarding();
+              },
+              child: const Text(
+                "Pular",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          )
+        : const SizedBox.shrink(); // Não exibe nada na última tela
   }
 }
