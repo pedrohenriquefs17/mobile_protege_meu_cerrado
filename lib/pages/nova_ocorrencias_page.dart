@@ -49,7 +49,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
   Future<void> _fetchCategorias() async {
     try {
       Response response = await _dio.get(
-        "http://192.168.0.131:8080/ocorrencias/categorias", //colocar seu ip
+        "http://192.168.0.207:8080/ocorrencias/categorias", //colocar seu ip
         options: Options(
           headers: {
             "Accept": "*/*",
@@ -93,12 +93,6 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
           dataFormatar.format(dataMudarNascimento);
       _dataNascimentoController.text = dataFormatadaNascimento;
     }
-    //data ocorrencia
-    final DateTime dataMudarOcorrencia =
-        dataPadrao.parse(_dataController.text.trim());
-    final String dataFormatadaOcorrencia =
-        dataFormatar.format(dataMudarOcorrencia);
-    _dataController.text = dataFormatadaOcorrencia;
   }
 
   Future<void> _enviarOcorrencia() async {
@@ -109,7 +103,7 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final dio = Dio();
 
-    final String url = 'http://192.168.0.131:8080/ocorrencias'; //colocar seu ip
+    final String url = 'http://192.168.0.207:8080/ocorrencias'; //colocar seu ip
 
     final Map<String, dynamic> data = {
       "idUser": prefs.getInt('idUsuario'),
@@ -121,7 +115,6 @@ class _NovaOcorrenciaPageState extends State<NovaOcorrenciaPage> {
       "dtNasc": isSwitched ? null : _dataNascimentoController.text.trim(),
       "descricao": _descricaoController.text.trim(),
       "isAnon": isSwitched,
-      "dtOcorrencia": _dataController.text.trim(),
       "lat": posicaoController.latitude.toString(),
       "lon": posicaoController.longitude.toString(),
     };

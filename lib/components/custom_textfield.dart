@@ -76,8 +76,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         mask: '(##)#####-####', filter: {'#': RegExp(r'[0-9]')});
 
     // De acordo com a label, retorna o TextField com a máscara e estilo apropriado
-    if (widget.label == 'Data de Nascimento' ||
-        widget.label == 'Data da Ocorrência') {
+    if (widget.label == 'Data de Nascimento') {
       return TextField(
         controller: widget.controller,
         decoration: inputDecoration,
@@ -120,6 +119,18 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           color: themeProvider.themeData.colorScheme.onSurface,
         ),
         maxLines: 5,
+      );
+    } else if (widget.label == 'Data da Ocorrência') {
+      return TextField(
+        controller: widget.controller,
+        decoration: inputDecoration,
+        obscureText: widget.obscureText,
+        onChanged: widget.onChanged,
+        inputFormatters: [maskFormatterData],
+        style: themeProvider.themeData.textTheme.bodyLarge?.copyWith(
+          color: themeProvider.themeData.colorScheme.onSurface,
+        ),
+        enabled: false,
       );
     } else {
       return TextField(

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/model/ocorrencias_model.dart';
 import 'package:mobile_protege_meu_cerrado/pages/minhas_ocorrencias_detail_page.dart';
 import 'package:mobile_protege_meu_cerrado/themes/theme_provider.dart';
@@ -20,6 +21,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
   List<dynamic> ocorrenciasFiltradas = [];
   final TextEditingController _pesquisarController = TextEditingController();
   List<dynamic> categorias = [];
+  List<String> datasFormatadas = [];
   bool isLoading = true; // Adiciona a variável de controle
 
   @override
@@ -48,7 +50,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'http://192.168.0.131:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
+        'http://192.168.0.207:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -67,7 +69,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
   }
 
   Future<void> getCategorias() async {
-    String url = 'http://192.168.0.131:8080/ocorrencias/categorias';
+    String url = 'http://192.168.0.207:8080/ocorrencias/categorias';
     Dio dio = Dio();
 
     try {
@@ -92,9 +94,18 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     });
   }
 
+  void formatarData() {
+    final DateFormat dataFormatar = DateFormat('dd/MM/yyyy');
+    for (int i = 0; i < ocorrencias.length; i++) {
+      datasFormatadas.add(
+          dataFormatar.format(DateTime.parse(ocorrencias[i].dataOcorrencia)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    formatarData();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -156,7 +167,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                                             categoria: categorias[
                                                 ocorrencia.categoria - 1],
                                             dataOcorrencia:
-                                                ocorrencia.dataOcorrencia,
+                                                datasFormatadas[index],
                                             latitude: ocorrencia.latitude,
                                             longitude: ocorrencia.longitude,
                                             imagem: ocorrencia.imagem,
@@ -191,7 +202,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
                                                   color: Colors.white,
                                                 )),
                                             Text(
-                                                'Data: ${ocorrencia.dataOcorrencia}',
+                                                'Data: ${datasFormatadas[index]}',
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.white,

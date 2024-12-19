@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class OcorrenciaDetalhesPage extends StatelessWidget {
   final Map<String, dynamic> ocorrencia;
@@ -7,6 +8,9 @@ class OcorrenciaDetalhesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dataFormatadaString =
+        DateFormat('dd/MM/yyyy').format(ocorrencia['dtOcorrencia']);
+        
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detalhes da Ocorrência'),
@@ -48,7 +52,7 @@ class OcorrenciaDetalhesPage extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Data: ${ocorrencia['dt_ocorrencia']?.toString() ?? 'Não informada'}',
+                            'Data: $dataFormatadaString',
                             style: const TextStyle(
                               fontSize: 16,
                               color: Colors.white,

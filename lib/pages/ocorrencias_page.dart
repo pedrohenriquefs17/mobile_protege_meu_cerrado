@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_protege_meu_cerrado/pages/minhas_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/nova_ocorrencias_page.dart';
 import 'package:mobile_protege_meu_cerrado/pages/ocorrencia_detail_page.dart';
@@ -22,6 +23,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
   bool isLoading = true;
   List<dynamic> ocorrencias = [];
   List<dynamic> ocorrenciasFiltradas = [];
+  List<String> datasFormatadas = [];
   final TextEditingController _pesquisarController = TextEditingController();
 
   @override
@@ -34,11 +36,11 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
 
   Future<void> _fetchOcorrencias() async {
     final String baseUrl =
-        'http://192.168.0.131:8080'; // Base URL do seu servidor
+        'http://192.168.0.207:8080'; // Base URL do seu servidor
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.0.131:8080/ocorrencias'),
+        Uri.parse('http://192.168.0.207:8080/ocorrencias'),
       );
 
       if (response.statusCode == 200) {
@@ -93,9 +95,18 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
     });
   }
 
+  void formatarData() {
+    final DateFormat dataFormatar = DateFormat('dd/MM/yyyy');
+    for (var element in ocorrencias) {
+      datasFormatadas
+          .add(dataFormatar.format(DateTime.parse(element['dtOcorrencia'])));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    formatarData();
 
     return Scaffold(
       appBar: AppBar(
@@ -302,7 +313,7 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
                                               ),
                                               const SizedBox(width: 8),
                                               Text(
-                                                'Data: ${ocorrencia['dtOcorrencia'] ?? 'Não informada'}',
+                                                'Data: ${datasFormatadas[index]}',
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.white,
