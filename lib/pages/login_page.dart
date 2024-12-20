@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _loadLoginData();
+    _checkLoggedIn();
 
     //para mudanças do token FMC
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
@@ -40,6 +41,42 @@ class _LoginPageState extends State<LoginPage> {
             .update({'fmcToken': newToken});
       }
     });
+  }
+
+  Future<void> _entrarSemLogar(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', '');
+    await prefs.setInt('idUsuario', 0);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacementNamed(context, '/home');
+    });
+  }
+
+  Future<void> _checkLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+
+    if (token != null && token.isNotEmpty) {
+      // Verifique a validade do token no servidor
+      final response = await http.post(
+        Uri.parse('https://pmc.airsoftcontrol.com.br/pmc/validate-token'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Token válido
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacementNamed(context, '/home');
+        });
+      } else {
+        // Token inválido, limpe o SharedPreferences
+        await prefs.remove('token');
+      }
+    }
   }
 
   Future<void> _loadLoginData() async {
@@ -281,7 +318,15 @@ class _LoginPageState extends State<LoginPage> {
                       text: _isLoading ? "Aguarde..." : "Entrar",
                       onTap: _isLoading ? null : login,
                     ),
-                    const SizedBox(height: 20),
+                    TextButton(
+                      onPressed:
+                          _isLoading ? null : () => _entrarSemLogar(context),
+                      child: const Text(
+                        "Entrar sem logar",
+                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     const MyRecuperarTxtbutton(),
                     // Botão de cadastrar
                     const MyCadastrarTxtbutton(),

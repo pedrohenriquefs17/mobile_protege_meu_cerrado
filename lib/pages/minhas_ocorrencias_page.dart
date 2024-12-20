@@ -50,7 +50,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario');
     final String url =
-        'http://meu_ip:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
+        'http://192.168.56.1:8080/ocorrencias/usuario/$idUsuario'; //colocar seu ip
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -69,7 +69,7 @@ class _MinhasOcorrenciasPageState extends State<MinhasOcorrenciasPage> {
   }
 
   Future<void> getCategorias() async {
-    String url = 'http://meu_ip:8080/ocorrencias/categorias';
+    String url = 'http://192.168.56.1:8080/ocorrencias/categorias';
     Dio dio = Dio();
 
     try {
