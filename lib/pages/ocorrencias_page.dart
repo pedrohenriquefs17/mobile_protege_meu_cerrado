@@ -35,12 +35,11 @@ class _OcorrenciasPageState extends State<OcorrenciasPage> {
   }
 
   Future<void> _fetchOcorrencias() async {
-    final String baseUrl =
-        'http://192.168.56.1:8080'; // Base URL do seu servidor
+    final String baseUrl = 'http://seu_ip:8080'; // Base URL do seu servidor
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.56.1:8080/ocorrencias'),
+        Uri.parse('http://seu_ip:8080/ocorrencias'),
       );
 
       if (response.statusCode == 200) {
